@@ -1,5 +1,6 @@
 package com.example.familybudget.controller;
 
+import com.example.familybudget.dto.UserDto;
 import com.example.familybudget.entity.User;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.mapper.UserMapper;
@@ -24,9 +25,9 @@ public class UserController {
     private static final String AUTHORIZATION = "Authorization";
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object>  getUserById(@RequestHeader(AUTHORIZATION) String token,
-                                               @Email @RequestParam String email,
-                                               @PathVariable long userId) {
+    public ResponseEntity<UserDto>  getUserById(@RequestHeader(AUTHORIZATION) String token,
+                                                @Email @RequestParam String email,
+                                                @PathVariable long userId) {
         String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
         String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
         User user = userRepository.getById(userId);

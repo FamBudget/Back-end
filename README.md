@@ -1,5 +1,7 @@
 ## Family Budget Web-Application
 
+### API for calculation and planning of expenses and family expenses
+
 ### Backend Technology:
 * Java 11
 * Spring Boot (Data, Security)

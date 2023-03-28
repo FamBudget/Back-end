@@ -30,12 +30,13 @@ public class User {
     private String confirmPassword;
     @Column(name = "activation_code")
     private String activationCode;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency")
+    private Currency currency;
 }

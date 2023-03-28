@@ -1,6 +1,7 @@
 package com.example.familybudget.controller;
 
 import com.example.familybudget.exception.ApiError;
+import com.example.familybudget.exception.CurrencyNotValidException;
 import com.example.familybudget.exception.ForbiddenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,8 @@ import java.time.format.DateTimeFormatter;
 public class ErrorHandler {
     private final ApiError apiError = new ApiError();
 
-    @ExceptionHandler
-    public ResponseEntity<?> handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class, CurrencyNotValidException.class})
+    public ResponseEntity<?> handleMethodArgumentNotValid(final Throwable e) {
         apiError.setMessage(e.getMessage());
         apiError.setStatus("BAD_REQUEST");
         apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));

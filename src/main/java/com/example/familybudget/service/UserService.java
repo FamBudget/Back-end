@@ -1,10 +1,8 @@
 package com.example.familybudget.service;
 
-import com.example.familybudget.dto.RegistrationRequest;
 import com.example.familybudget.entity.Role;
 import com.example.familybudget.entity.Status;
 import com.example.familybudget.entity.User;
-import com.example.familybudget.mapper.UserMapper;
 import com.example.familybudget.repository.UserRepository;
 import com.example.familybudget.service.util.EmailProvider;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +31,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User registerUser(RegistrationRequest registrationRequest) {
-        User user = UserMapper.INSTANCE.registrationToUser(registrationRequest);
+    public User registerUser(User user) {
+
         user.setRole(Role.USER);
         user.setStatus(Status.NOT_ACTIVE);
         user.setActivationCode(UUID.randomUUID().toString());
         addUser(user);
-
         String message = String.format(
                 "Hello, %s! \n" +
                         "Welcome to Family Budget. Please, visit next link: %s/%s",

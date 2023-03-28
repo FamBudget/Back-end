@@ -3,12 +3,17 @@ package com.example.familybudget.controller;
 import com.example.familybudget.dto.AuthenticationRequest;
 import com.example.familybudget.dto.AuthenticationResponse;
 import com.example.familybudget.dto.RegistrationRequest;
+import com.example.familybudget.dto.UserDto;
+import com.example.familybudget.entity.Currency;
 import com.example.familybudget.entity.Status;
 import com.example.familybudget.entity.User;
+import com.example.familybudget.exception.CurrencyNotValidException;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.mapper.UserMapper;
 import com.example.familybudget.security.JwtProvider;
 import com.example.familybudget.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +23,38 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
+@Api(description = "Controller for registration and activation users and for authentication")
 public class AuthController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
 
+    @ApiOperation(value = "Registration new user", notes = "The email, firstName, lastName, currency, password and " +
+            "confirmPassword are sent in json format. " +
+            "The body of the request is the RegistrationRequest class. Add new user with password to database. " +
+            "The body of the response is the UserDto class (it contains id, email, firstName, lastName and currency). " +
+            "If a user with the same email already exists or password has not correct format or " +
+            "password and confirmPassword don't match or currency has incorrect name, " +
+            "an appropriate exception will be thrown")
     @PostMapping("/registration")
-    public ResponseEntity<Object> registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
-        User user = userService.registerUser(registrationRequest);
-        return new ResponseEntity<>(UserMapper.INSTANCE.toUserDto(user), HttpStatus.CREATED);
+    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
+        Currency currency = Currency.valid(registrationRequest.getCurrency())
+                .orElseThrow(() -> new CurrencyNotValidException("Unknown state: " + registrationRequest.getCurrency()));
+        User user = UserMapper.INSTANCE.registrationToUser(registrationRequest);
+        user.setCurrency(currency);
+        userService.registerUser(user);
+        UserDto userDto = UserMapper.INSTANCE.toUserDto(user);
+        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "User authentication", notes =
+            "The username and password are sent in json format. " +
+            "The body of the request is the AuthenticationRequest class. " +
+            "If the name and password match the entry in the database, " +
+            "then a token is generated and sent in json format. The body of the " +
+            "response is the AuthenticationResponse class. Else an appropriate exception will be thrown.")
     @PostMapping("/authentication")
-    public ResponseEntity<Object> authentication(@RequestBody @Valid AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> authentication(@RequestBody @Valid AuthenticationRequest request) {
         User user = userService.findByEmailAndPassword(request.getEmail(), request.getPassword());
         if (user.getStatus() != Status.ACTIVE) {
             throw new ForbiddenException("User not activated");
@@ -41,8 +65,9 @@ public class AuthController {
         return new ResponseEntity<>(authenticationResponse, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Activation registered user", notes = "Returns a result about the activation status")
     @GetMapping("/activate/{code}")
-    public ResponseEntity<Object> activate(@PathVariable String code) {
+    public ResponseEntity<String> activate(@PathVariable String code) {
         userService.activateUser(code);
             return new ResponseEntity<>("User activated", HttpStatus.OK);
     }

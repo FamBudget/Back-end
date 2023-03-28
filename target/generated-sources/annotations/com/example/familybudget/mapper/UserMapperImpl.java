@@ -2,12 +2,13 @@ package com.example.familybudget.mapper;
 
 import com.example.familybudget.dto.RegistrationRequest;
 import com.example.familybudget.dto.UserDto;
+import com.example.familybudget.entity.Currency;
 import com.example.familybudget.entity.User;
 import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-28T18:52:49+0500",
+    date = "2023-03-29T00:14:44+0500",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 11.0.14.1 (Amazon.com Inc.)"
 )
 public class UserMapperImpl implements UserMapper {
@@ -24,6 +25,7 @@ public class UserMapperImpl implements UserMapper {
         userDto.setEmail( user.getEmail() );
         userDto.setFirstName( user.getFirstName() );
         userDto.setLastName( user.getLastName() );
+        userDto.setCurrency( user.getCurrency() );
 
         return userDto;
     }
@@ -41,6 +43,9 @@ public class UserMapperImpl implements UserMapper {
         user.setLastName( registrationRequest.getLastName() );
         user.setPassword( registrationRequest.getPassword() );
         user.setConfirmPassword( registrationRequest.getConfirmPassword() );
+        if ( registrationRequest.getCurrency() != null ) {
+            user.setCurrency( Enum.valueOf( Currency.class, registrationRequest.getCurrency() ) );
+        }
 
         return user;
     }

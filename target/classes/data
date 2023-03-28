@@ -1,5 +1,0 @@
-INSERT INTO users (email, name, password, role, status)
-VALUES
-    ('johndoe@yahoo.com', 'John Doe', '$2a$12$2b75/kZRtObHp4M88ZFEQe.FMM8P9r.aK6yl/OSI0AzA9xo.ucBca', 'ADMIN', 'ACTIVE'), -- pass-admin
-    ('mike@mail.ru', 'Mike Snow', '$2a$12$2b75/kZRtObHp4M88ZFEQe.FMM8P9r.aK6yl/OSI0AzA9xo.ucBca', 'MODERATOR', 'ACTIVE'), -- pass-admin
-    ('user@gmail.com', 'Test User', '$2a$12$qmyqcf.oco6EFN/C74Dxne.Xo8fcKPEKyT0WUV3sYXTO8aiYwSlyS', 'USER', 'ACTIVE'); -- pass-user

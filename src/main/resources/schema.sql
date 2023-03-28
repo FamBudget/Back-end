@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS users
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    password VARCHAR(255),
+    role VARCHAR(25)  DEFAULT 'USER',
+    status VARCHAR(25),
+    activation_code VARCHAR(255)
+);

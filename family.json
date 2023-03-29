@@ -1,0 +1,487 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Family budget API",
+    "description": "API for calculation and planning of expenses and family expenses",
+    "termsOfService": "Terms of service",
+    "contact": {
+      "name": "Mikhail Artemev",
+      "email": "artemev1986@gmail.com"
+    },
+    "license": {
+      "name": "License of API",
+      "url": "API license URL"
+    },
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth-controller",
+      "description": "Controller for registration and activation users and for authentication"
+    },
+    {
+      "name": "user-controller",
+      "description": "User Controller"
+    }
+  ],
+  "paths": {
+    "/activate/{code}": {
+      "get": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Activation registered user",
+        "description": "Returns a result about the activation status",
+        "operationId": "activateUsingGET",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "description": "code",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/authentication": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "User authentication",
+        "description": "The username and password are sent in json format. The body of the request is the AuthenticationRequest class. If the name and password match the entry in the database, then a token is generated and sent in json format. The body of the response is the AuthenticationResponse class. Else an appropriate exception will be thrown.",
+        "operationId": "authenticationUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "AuthenticationRequest",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User email",
+                    "example": "test@mail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password",
+                    "example": "12qwaszx!@QWASZX"
+                  }
+                },
+                "description": "Request for authentication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "AuthenticationResponse",
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "token",
+                      "example": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnRlbWV2MTk4NkBnbWFpbC5jb20iLCJleHAiOjE2ODAwMzcxNjB9.e127HkzxqERU9kRjJW-PsNb9jxEoSrZOLk34-m-_P9s"
+                    }
+                  },
+                  "description": "Response after successful authentication"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/registration": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Registration new user",
+        "description": "The email, firstName, lastName, currency, password and confirmPassword are sent in json format. The body of the request is the RegistrationRequest class. Add new user with password to database. The body of the response is the UserDto class (it contains id, email, firstName, lastName and currency). If a user with the same email already exists or password has not correct format or password and confirmPassword don't match or currency has incorrect name, an appropriate exception will be thrown",
+        "operationId": "registerUserUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "RegistrationRequest",
+                "required": [
+                  "confirmPassword",
+                  "currency",
+                  "email",
+                  "password"
+                ],
+                "type": "object",
+                "properties": {
+                  "confirmPassword": {
+                    "type": "string",
+                    "description": "confirmPassword",
+                    "example": "12qwaszx!@QWASZX"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "description": "currency",
+                    "example": "RUB_RUS"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "User email",
+                    "example": "test@mail.com"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "first name",
+                    "example": "Mikhail"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "Last name",
+                    "example": "Stone"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password",
+                    "example": "12qwaszx!@QWASZX"
+                  }
+                },
+                "description": "Request for registration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "UserDto",
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "Currency",
+                      "example": "RUB_RUS",
+                      "enum": [
+                        "DOLLAR_USA",
+                        "EURO_EU",
+                        "RUB_BEL",
+                        "RUB_RUS",
+                        "TENGE_KAZ"
+                      ]
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "User email",
+                      "example": "test@mail.com"
+                    },
+                    "firstName": {
+                      "type": "string",
+                      "description": "first name",
+                      "example": "Mikhail"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "description": "User ID",
+                      "format": "int64",
+                      "example": 1
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "description": "Last name",
+                      "example": "Stone"
+                    }
+                  },
+                  "description": "Short information about requested user"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "getUserById",
+        "operationId": "getUserByIdUsingGET",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "userId",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "UserDto",
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "Currency",
+                      "example": "RUB_RUS",
+                      "enum": [
+                        "DOLLAR_USA",
+                        "EURO_EU",
+                        "RUB_BEL",
+                        "RUB_RUS",
+                        "TENGE_KAZ"
+                      ]
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "User email",
+                      "example": "test@mail.com"
+                    },
+                    "firstName": {
+                      "type": "string",
+                      "description": "first name",
+                      "example": "Mikhail"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "description": "User ID",
+                      "format": "int64",
+                      "example": 1
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "description": "Last name",
+                      "example": "Stone"
+                    }
+                  },
+                  "description": "Short information about requested user"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthenticationRequest": {
+        "title": "AuthenticationRequest",
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "test@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "password",
+            "example": "12qwaszx!@QWASZX"
+          }
+        },
+        "description": "Request for authentication"
+      },
+      "AuthenticationResponse": {
+        "title": "AuthenticationResponse",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "token",
+            "example": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnRlbWV2MTk4NkBnbWFpbC5jb20iLCJleHAiOjE2ODAwMzcxNjB9.e127HkzxqERU9kRjJW-PsNb9jxEoSrZOLk34-m-_P9s"
+          }
+        },
+        "description": "Response after successful authentication"
+      },
+      "RegistrationRequest": {
+        "title": "RegistrationRequest",
+        "required": [
+          "confirmPassword",
+          "currency",
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "confirmPassword": {
+            "type": "string",
+            "description": "confirmPassword",
+            "example": "12qwaszx!@QWASZX"
+          },
+          "currency": {
+            "type": "string",
+            "description": "currency",
+            "example": "RUB_RUS"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "test@mail.com"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "first name",
+            "example": "Mikhail"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name",
+            "example": "Stone"
+          },
+          "password": {
+            "type": "string",
+            "description": "password",
+            "example": "12qwaszx!@QWASZX"
+          }
+        },
+        "description": "Request for registration"
+      },
+      "UserDto": {
+        "title": "UserDto",
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency",
+            "example": "RUB_RUS",
+            "enum": [
+              "DOLLAR_USA",
+              "EURO_EU",
+              "RUB_BEL",
+              "RUB_RUS",
+              "TENGE_KAZ"
+            ]
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "test@mail.com"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "first name",
+            "example": "Mikhail"
+          },
+          "id": {
+            "type": "integer",
+            "description": "User ID",
+            "format": "int64",
+            "example": 1
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name",
+            "example": "Stone"
+          }
+        },
+        "description": "Short information about requested user"
+      }
+    }
+  }
+}

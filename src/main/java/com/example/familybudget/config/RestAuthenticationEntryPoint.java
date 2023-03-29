@@ -18,7 +18,9 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse httpServletResponse,
                          AuthenticationException e) throws IOException {
 
-        ApiResponse response = new ApiResponse(401, "User don't unauthorised");
+        ApiResponse response = new ApiResponse();
+        response.setStatus(401);
+        response.setMessage("User don't unauthorised");
         OutputStream out = httpServletResponse.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(out, response);

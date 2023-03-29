@@ -18,7 +18,9 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
                        HttpServletResponse httpServletResponse,
                        AccessDeniedException e) throws IOException {
 
-        ApiResponse response = new ApiResponse(403, "Access Denied");
+        ApiResponse response = new ApiResponse();
+        response.setStatus(403);
+        response.setMessage("Access Denied");
         OutputStream out = httpServletResponse.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(out, response);

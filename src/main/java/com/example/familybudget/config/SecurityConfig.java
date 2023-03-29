@@ -18,8 +18,8 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
     private static final String SWAGGER = "/swagger-ui**/**";
-    private static final String USER_ENDPOINT = "/user/**";
-    private static final String ADMIN_ENDPOINT = "/admin/**";
+    private static final String USER_ENDPOINT = "/users/**";
+    private static final String ADMIN_ENDPOINT = "/admins/**";
     private static final String REGISTRATION_ENDPOINT = "/registration";
     private static final String AUTHENTICATION_ENDPOINT = "/authentication";
     private static final String ACTIVATE_ENDPOINT = "/activate/*";

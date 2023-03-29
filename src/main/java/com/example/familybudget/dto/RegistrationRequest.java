@@ -2,6 +2,7 @@ package com.example.familybudget.dto;
 
 import com.example.familybudget.entity.annotation.PasswordValueMatch;
 import com.example.familybudget.entity.annotation.ValidPassword;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,15 +17,16 @@ import javax.validation.constraints.NotBlank;
         )
 })
 @Data
+@ApiModel(description = "Request for registration")
 public class RegistrationRequest {
 
     @Email
     @NotBlank
     @ApiModelProperty(notes = "User email", example = "test@mail.com", required = true)
     private String email;
-    @ApiModelProperty(notes = "first name", example = "Mikhail", required = false)
+    @ApiModelProperty(notes = "first name", example = "Mikhail")
     private String firstName;
-    @ApiModelProperty(notes = "Last name", example = "Stone", required = false)
+    @ApiModelProperty(notes = "Last name", example = "Stone")
     private String lastName;
     @ValidPassword
     @NotBlank

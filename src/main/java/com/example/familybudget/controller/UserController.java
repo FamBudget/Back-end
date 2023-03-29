@@ -16,7 +16,7 @@ import javax.validation.constraints.Email;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/users")
 @Validated
 public class UserController {
 
@@ -32,7 +32,7 @@ public class UserController {
         String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
         User user = userRepository.getById(userId);
         if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the name from the token");
+            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
         }
         return new ResponseEntity<>(UserMapper.INSTANCE.toUserDto(user), HttpStatus.OK);
     }

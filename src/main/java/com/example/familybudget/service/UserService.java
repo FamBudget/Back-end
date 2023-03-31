@@ -1,8 +1,8 @@
 package com.example.familybudget.service;
 
-import com.example.familybudget.entity.Role;
-import com.example.familybudget.entity.Status;
-import com.example.familybudget.entity.User;
+import com.example.familybudget.entity.*;
+import com.example.familybudget.repository.CategoryExpenseRepository;
+import com.example.familybudget.repository.CategoryIncomeRepository;
 import com.example.familybudget.repository.UserRepository;
 import com.example.familybudget.service.util.EmailProvider;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -22,6 +24,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailProvider emailProvider;
+    private final CategoryIncomeRepository categoryIncomeRepository;
+    private final CategoryExpenseRepository categoryExpenseRepository;
+    private final List<String> categoryIncomeList = List.of("Category1", "Category2", "Category3");
+    private final List<String> categoryExpenseList = List.of("Category1", "Category2", "Category3");
 
     @Value("${link.to.email}")
     private String link;
@@ -77,5 +83,19 @@ public class UserService {
         user.setActivationCode(null);
         user.setStatus(Status.ACTIVE);
         userRepository.save(user);
+        List<CategoryIncome> listIncome = new ArrayList<>();
+        List<CategoryExpense> listExpense = new ArrayList<>();
+
+        for (String category: categoryIncomeList) {
+            listIncome.add(new CategoryIncome(category, user));
+        }
+
+        for (String category: categoryExpenseList) {
+            listExpense.add(new CategoryExpense(category, user));
+        }
+
+        categoryIncomeRepository.saveAll(listIncome);
+        categoryExpenseRepository.saveAll(listExpense);
+
     }
 }

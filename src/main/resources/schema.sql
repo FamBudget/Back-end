@@ -10,3 +10,71 @@ CREATE TABLE IF NOT EXISTS users
     activation_code VARCHAR(255),
     currency VARCHAR(20) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS categories_income (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    user_id BIGINT REFERENCES users(id) NOT NULL,
+    CONSTRAINT unique_category_income_user UNIQUE (name, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS categories_expense (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    user_id BIGINT REFERENCES users(id) NOT NULL,
+    CONSTRAINT unique_category_expense_user UNIQUE (name, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS accounts (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    amount REAL NOT NULL,
+    user_id BIGINT REFERENCES users(id) NOT NULL,
+    CONSTRAINT unique_name_user UNIQUE (name, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS operations_income (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    amount REAL NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    category_id BIGINT REFERENCES categories_income(id) NOT NULL,
+    account_id BIGINT REFERENCES accounts(id) NOT NULL,
+    created_on TIMESTAMP WITHOUT TIME ZONE,
+    user_id BIGINT REFERENCES users(id) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS operations_expense (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    amount REAL NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    category_id BIGINT REFERENCES categories_expense(id) NOT NULL,
+    account_id BIGINT REFERENCES accounts(id) NOT NULL,
+    created_on TIMESTAMP WITHOUT TIME ZONE,
+    user_id BIGINT REFERENCES users(id) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS plans_income (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    category_id BIGINT REFERENCES categories_income(id) NOT NULL,
+    year INT NOT NULL,
+    month INT NOT NULL,
+    user_id BIGINT REFERENCES users(id) NOT NULL,
+    CONSTRAINT unique_plan_income UNIQUE (category_id, year, month, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS plans_expense (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    category_id BIGINT REFERENCES categories_expense(id) NOT NULL,
+    year INT NOT NULL,
+    month INT NOT NULL,
+    user_id BIGINT REFERENCES users(id) NOT NULL,
+    CONSTRAINT unique_plan_expense UNIQUE (category_id, year, month, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS accounts_move (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    account_from_id BIGINT REFERENCES accounts(id) NOT NULL,
+    account_to_id BIGINT REFERENCES accounts(id) NOT NULL,
+    amount REAL NOT NULL,
+    moved_date TIMESTAMP WITHOUT TIME ZONE
+);

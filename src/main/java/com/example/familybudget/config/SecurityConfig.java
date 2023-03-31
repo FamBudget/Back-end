@@ -21,6 +21,7 @@ public class SecurityConfig {
 
     private static final String SWAGGER = "/swagger-ui**/**";
     private static final String USER_ENDPOINT = "/users/**";
+    private static final String CATEGORY_ENDPOINT = "/categories/**";
     private static final String ADMIN_ENDPOINT = "/admins/**";
     private static final String REGISTRATION_ENDPOINT = "/registration";
     private static final String AUTHENTICATION_ENDPOINT = "/authentication";

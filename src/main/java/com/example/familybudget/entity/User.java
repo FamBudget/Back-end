@@ -1,7 +1,6 @@
 package com.example.familybudget.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,12 +11,7 @@ import javax.persistence.*;
 @ToString
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends BaseEntity {
     @Column(name = "email")
     private String email;
     @Column(name = "first_name")

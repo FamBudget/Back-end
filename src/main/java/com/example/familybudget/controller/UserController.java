@@ -28,6 +28,7 @@ public class UserController {
     public ResponseEntity<UserDto>  getUserById(@RequestHeader(AUTHORIZATION) String token,
                                                 @Email @RequestParam String email,
                                                 @PathVariable long userId) {
+
         String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
         String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
         if (!emailDec.equals(emailJwt)) {

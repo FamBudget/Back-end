@@ -57,6 +57,7 @@ public class AuthController {
             "response is the AuthenticationResponse class. Else an appropriate exception will be thrown.")
     @PostMapping("/authentication")
     public ResponseEntity<AuthenticationResponse> authentication(@RequestBody @Valid AuthenticationRequest request) {
+
         User user = userService.findByEmailAndPassword(request.getEmail(), request.getPassword());
         if (user.getStatus() != Status.ACTIVE) {
             throw new ForbiddenException("User not activated");
@@ -70,6 +71,7 @@ public class AuthController {
     @ApiOperation(value = "Activation registered user", notes = "Returns a result about the activation status")
     @GetMapping("/activate/{code}")
     public ResponseEntity<String> activate(@PathVariable String code) {
+
         userService.activateUser(code);
             return new ResponseEntity<>("User activated", HttpStatus.OK);
     }
@@ -78,6 +80,7 @@ public class AuthController {
     @PostMapping("/auth/logout")
     public ResponseEntity<String>  logout(@RequestHeader(AUTHORIZATION) String token,
                                                 @Email @RequestParam String email) {
+
         String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
         String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
         if (!emailDec.equals(emailJwt)) {

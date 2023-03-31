@@ -25,6 +25,7 @@ public class SecurityConfig {
     private static final String ADMIN_ENDPOINT = "/admins/**";
     private static final String REGISTRATION_ENDPOINT = "/registration";
     private static final String AUTHENTICATION_ENDPOINT = "/authentication";
+    private static final String LOGOUT_ENDPOINT = "/auth/logout**";
     private static final String ACTIVATE_ENDPOINT = "/activate/*";
 
     @Bean
@@ -44,6 +45,8 @@ public class SecurityConfig {
                 .antMatchers(ACTIVATE_ENDPOINT).permitAll()
                 .antMatchers(AUTHENTICATION_ENDPOINT).permitAll()
                 .antMatchers(USER_ENDPOINT).hasRole("USER")
+                .antMatchers(LOGOUT_ENDPOINT).hasRole("USER")
+                .antMatchers(LOGOUT_ENDPOINT).hasRole("ADMIN")
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)

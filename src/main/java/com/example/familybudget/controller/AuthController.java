@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,6 +29,7 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private static final String AUTHORIZATION = "Authorization";
 
     @ApiOperation(value = "Registration new user", notes = "The email, firstName, lastName, currency, password and " +
             "confirmPassword are sent in json format. " +
@@ -70,5 +72,18 @@ public class AuthController {
     public ResponseEntity<String> activate(@PathVariable String code) {
         userService.activateUser(code);
             return new ResponseEntity<>("User activated", HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Logout user", notes = "Returns the token success lock result")
+    @PostMapping("/auth/logout")
+    public ResponseEntity<String>  logout(@RequestHeader(AUTHORIZATION) String token,
+                                                @Email @RequestParam String email) {
+        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
+        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
+        if (!emailDec.equals(emailJwt)) {
+            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
+        }
+        jwtProvider.blacklistToken(token.substring(7));
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 }

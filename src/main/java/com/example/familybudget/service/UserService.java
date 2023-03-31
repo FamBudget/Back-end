@@ -83,6 +83,8 @@ public class UserService {
         user.setActivationCode(null);
         user.setStatus(Status.ACTIVE);
         userRepository.save(user);
+
+        log.debug("user {} was activated: ", user);
         List<CategoryIncome> listIncome = new ArrayList<>();
         List<CategoryExpense> listExpense = new ArrayList<>();
 
@@ -95,7 +97,8 @@ public class UserService {
         }
 
         categoryIncomeRepository.saveAll(listIncome);
+        log.debug("Added new income categories for user: ", user);
         categoryExpenseRepository.saveAll(listExpense);
-
+        log.debug("Added new expense categories for user: ", user);
     }
 }

@@ -5,6 +5,7 @@ import com.example.familybudget.dto.NewCategoryDto;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.security.JwtProvider;
 import com.example.familybudget.service.CategoryService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,10 @@ public class CategoryController {
     private final JwtProvider jwtProvider;
     private static final String AUTHORIZATION = "Authorization";
 
+    @ApiOperation(value = "Get income categories by user email",
+            notes = "This code is an endpoint for retrieving income categories by user email. " +
+                    "It takes in several parameters, including an authorization token, the user's email," +
+                    " a starting index (from) for pagination, and a maximum (size) number of results to return.")
     @GetMapping("/income")
     public ResponseEntity<List<CategoryDto>> getCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
@@ -43,6 +48,10 @@ public class CategoryController {
         return new ResponseEntity<>(categoryIncomeList, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get expense categories by user email",
+            notes = "This code is an endpoint for retrieving income categories by user email. " +
+                    "It takes in several parameters, including an authorization token, the user's email," +
+                    " a starting index (from) for pagination, and a maximum (size) number of results to return.")
     @GetMapping("/expense")
     public ResponseEntity<List<CategoryDto>> getCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,
@@ -59,6 +68,11 @@ public class CategoryController {
         return new ResponseEntity<>(categoryExpenseList, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Create a new income category",
+            notes = "Creates a new income category for the user with the specified email.\n\n" +
+                    "The email should be provided as a request parameter and the category details should be provided in the request body.\n\n" +
+                    "If the email provided in the request parameter does not match the email in the JWT token, a ForbiddenException will be thrown.\n\n" +
+                    "Returns the created category.")
     @PostMapping("/income")
     public ResponseEntity<CategoryDto> addCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
@@ -75,6 +89,11 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Create a new expense category",
+            notes = "Creates a new expense category for the user with the specified email.\n\n" +
+                    "The email should be provided as a request parameter and the category details should be provided in the request body.\n\n" +
+                    "If the email provided in the request parameter does not match the email in the JWT token, a ForbiddenException will be thrown.\n\n" +
+                    "Returns the created category.")
     @PostMapping("/expense")
     public ResponseEntity<CategoryDto> addCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,
@@ -91,6 +110,11 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Update an existing income category",
+            notes = "Updates an existing income category for the user with the specified email.\n\n" +
+                    "The email should be provided as a request parameter and the updated category details should be provided in the request body.\n\n" +
+                    "If the email provided in the request parameter does not match the email in the JWT token, a ForbiddenException will be thrown.\n\n" +
+                    "Returns the updated category.")
     @PutMapping("/income")
     public ResponseEntity<CategoryDto> updateCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
@@ -107,6 +131,11 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Update an existing expense category",
+            notes = "Updates an existing expense category for the user with the specified email.\n\n" +
+                    "The email should be provided as a request parameter and the updated category details should be provided in the request body.\n\n" +
+                    "If the email provided in the request parameter does not match the email in the JWT token, a ForbiddenException will be thrown.\n\n" +
+                    "Returns the updated category.")
     @PutMapping("/expense")
     public ResponseEntity<CategoryDto> updateCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,
@@ -123,6 +152,11 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Delete an existing income category",
+            notes = "Deletes an existing income category for the user with the specified email.\n\n" +
+                    "The email should be provided as a request parameter and the category ID should be provided as a path variable.\n\n" +
+                    "If the email provided in the request parameter does not match the email in the JWT token, a ForbiddenException will be thrown.\n\n" +
+                    "Returns a ResponseEntity with a status code of 200 OK.")
     @DeleteMapping("/income/{categoryId}")
     public ResponseEntity<?> deleteCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
@@ -139,6 +173,11 @@ public class CategoryController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "Delete an existing expense category",
+            notes = "Deletes an existing expense category for the user with the specified email.\n\n" +
+                    "The email should be provided as a request parameter and the category ID should be provided as a path variable.\n\n" +
+                    "If the email provided in the request parameter does not match the email in the JWT token, a ForbiddenException will be thrown.\n\n" +
+                    "Returns a ResponseEntity with a status code of 200 OK.")
     @DeleteMapping("/expense/{categoryId}")
     public ResponseEntity<?> deleteCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,

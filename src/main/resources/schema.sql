@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     name VARCHAR(30) NOT NULL,
     amount REAL NOT NULL,
     user_id BIGINT REFERENCES users(id) NOT NULL,
+    currency VARCHAR(20) NOT NULL,
     CONSTRAINT unique_name_user UNIQUE (name, user_id)
 );
 

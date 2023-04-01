@@ -1,47 +1,45 @@
 ## Family Budget Web-Application
+This is a RESTful API designed for calculating and planning family expenses. It provides endpoints for user authentication, category management, and user information retrieval. This application is built using Java 11, Spring Boot, Maven, Hibernate, Postgresql, JWT, MailSender, Lombok, and Swagger.
 
-### API for calculation and planning of expenses and family expenses
+##  [Swagger service specification](family.json)</br>
 
-### Backend Technology:
+#### Endpoints
+**free access for everyone**
 
-* Java 11
-* Spring Boot (Data, Security)
-* Maven
-* Hibernate
-* Postgresql
-* JWT
-* MailSender
-* Lombok
-* Swagger
+This controller provides endpoints for user authentication and registration.
 
- ##  [Swagger service specification](family.json)</br>
+- **POST -- /registration**: Registers a new user with the provided email, first name, last name, currency, password, and confirmation password. The body of the request is the RegistrationRequest class. The response body contains the UserDto class, which includes the user's ID, email, first name, last name, and currency. If the email already exists, or the passwords don't match or don't meet the format criteria, or the currency name is invalid, an appropriate exception will be thrown.
+- **GET -- /activation/{activationCode}**: Activates the user account via email link.
+- **POST -- /authentication**: Authenticates the user by matching the provided username and password with the user's information in the database. If the authentication is successful, a token is generated and sent in json format. The response body is the AuthenticationResponse class. Otherwise, an appropriate exception will be thrown.
+UserController
+localhost:8080/users
 
-### REST API endpoints:
-`localhost:8080/`  
-**free access for everyone**  
-- **POST** -- /*registration* endpoint.
-  The email, firstName, lastName, currency, password and confirmPassword are sent in json format. The body of 
-the request is the RegistrationRequest class. Add new user with password to database. The body of the response 
-is the UserDto class (it contains id, email, firstName, lastName and currency). If a user with the same email 
-already exists or password has not correct format or password and confirmPassword don't match or currency has 
-incorrect name, an appropriate exception will be thrown
+This controller provides an endpoint for retrieving user information.
 
-- **GET** -- */activation/{activationCode}*
-  * user activation via email link
-  
-- **POST** /*authentication* endpoint.
-  The username and password are sent in json format. The body of the request is the AuthenticationRequest class.
-If the name and password match the entry in the database, then a token is generated and sent in json format.
-The body of the response is the AuthenticationResponse class. Else an appropriate exception will be thrown.
+- **GET -- /users/{id}**: Retrieves short information about the user by their ID. The user ID is sent as a path variable. The Authorization header is also added to the endpoint. It is equal to Bearer {token}. In case of successful verification of the token, the information about the user will be retrieved from the database.
+CategoryController:
+localhost:8080/categories
 
-`localhost:8080/users`  
-**access only by token after authentication**
+This controller provides endpoints for managing income and expense categories for a user.
 
-- **GET** /*users/{id}*
-  * This method get short information about the user by his id.
-The userId is sent as pathVariable. The ***Authorization*** header is also added to the endpoint. 
-It is equal to **Bearer {token}**. In case of successful verification of the token, the information 
-about user will be uploaded from the database.
+- **GET -- /categories/income**: Retrieves a list of income categories for a user, based on the user's email, starting index, and maximum number of results.
+- **GET -- /categories/expense**: Retrieves a list of expense categories for a user, based on the user's email, starting index, and maximum number of results.
+- **POST -- /categories/income**: Creates a new income category for a user, based on the user's email and a new category DTO provided in the request body.
+- **POST -- /categories/expense**: Creates a new expense category for a user, based on the user's email and a new category DTO provided in the request body.
+The endpoints use the CategoryService class to perform business logic related to categories, and the JwtProvider class to verify the JWT tokens provided in the requests. The code also includes validation annotations to ensure that the request parameters and body are valid.
+
+Backend Technology
+The application is built using Java 11 and Spring Boot, along with several other technologies:
+
+- **Java 11**
+- **Maven**
+- **Spring Boot (Data, Security)**
+- **Hibernate**
+- **Postgresql**
+- **JWT**
+- **MailSender**
+- **Lombok**
+- **Swagger**
 
 ### How to run this project :
 

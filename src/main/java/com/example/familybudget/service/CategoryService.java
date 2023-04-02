@@ -49,6 +49,22 @@ public class CategoryService {
         return categoriesDto;
     }
 
+    public CategoryDto getCategoryIncomeById(long id) {
+        CategoryIncome category = categoryIncomeRepository.getById(id);
+        CategoryDto categoryDto = CategoryMapper.INSTANCE.toCategoryDto(category);
+
+        log.debug("Got category income {} by id", category);
+        return categoryDto;
+    }
+
+    public CategoryDto getCategoryExpenseById(long id) {
+        CategoryExpense category = categoryExpenseRepository.getById(id);
+        CategoryDto categoryDto = CategoryMapper.INSTANCE.toCategoryDto(category);
+
+        log.debug("Got category expense {} by id", category);
+        return categoryDto;
+    }
+
     public CategoryDto addCategoryIncome(NewCategoryDto categoryDto, String email) {
         User user = findUserByEmail(email);
         CategoryIncome category = CategoryMapper.INSTANCE.toCategoryIncome(categoryDto, user);
@@ -93,7 +109,7 @@ public class CategoryService {
         User user = findUserByEmail(email);
         CategoryIncome category = categoryIncomeRepository.getById(id);
         if (!user.getId().equals(category.getUser().getId())) {
-            throw new ForbiddenException("This user can't update this category");
+            throw new ForbiddenException("This user can't delete this category");
         }
         categoryIncomeRepository.deleteById(id);
         log.debug("Category of income with id ({}) was deleted", id);
@@ -103,7 +119,7 @@ public class CategoryService {
         User user = findUserByEmail(email);
         CategoryExpense category = categoryExpenseRepository.getById(id);
         if (!user.getId().equals(category.getUser().getId())) {
-            throw new ForbiddenException("This user can't update this category");
+            throw new ForbiddenException("This user can't delete this category");
         }
         categoryExpenseRepository.deleteById(id);
         log.debug("Category of expense with id ({}) was deleted", id);

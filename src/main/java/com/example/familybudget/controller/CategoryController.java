@@ -1,9 +1,8 @@
 package com.example.familybudget.controller;
 
+import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.CategoryDto;
 import com.example.familybudget.dto.NewCategoryDto;
-import com.example.familybudget.exception.ForbiddenException;
-import com.example.familybudget.security.JwtProvider;
 import com.example.familybudget.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final JwtProvider jwtProvider;
+    private final ControllerUtil controllerUtil;
     private static final String AUTHORIZATION = "Authorization";
 
     @ApiOperation(value = "Get income categories by user email",
@@ -39,11 +38,7 @@ public class CategoryController {
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         List<CategoryDto> categoryIncomeList = categoryService.getCategoriesIncomeByUserId(email, from, size);
         return new ResponseEntity<>(categoryIncomeList, HttpStatus.OK);
     }
@@ -59,11 +54,7 @@ public class CategoryController {
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         List<CategoryDto> categoryExpenseList = categoryService.getCategoriesExpenseByUserId(email, from, size);
         return new ResponseEntity<>(categoryExpenseList, HttpStatus.OK);
     }
@@ -79,11 +70,7 @@ public class CategoryController {
             @Email @RequestParam String email,
             @Valid @RequestBody NewCategoryDto newCategoryDto) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         CategoryDto categoryDto = categoryService.addCategoryIncome(newCategoryDto, email);
 
         return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
@@ -100,14 +87,30 @@ public class CategoryController {
             @Email @RequestParam String email,
             @Valid @RequestBody NewCategoryDto newCategoryDto) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         CategoryDto categoryDto = categoryService.addCategoryExpense(newCategoryDto, email);
 
         return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/income/{categoryId}")
+    public ResponseEntity<CategoryDto>  getCategoryIncomeById(@RequestHeader(AUTHORIZATION) String token,
+                                                @Email @RequestParam String email,
+                                                @PathVariable long categoryId) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        CategoryDto categoryDto = categoryService.getCategoryIncomeById(categoryId);
+        return new ResponseEntity<>(categoryDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/expense/{categoryId}")
+    public ResponseEntity<CategoryDto>  getCategoryExpenseById(@RequestHeader(AUTHORIZATION) String token,
+                                                              @Email @RequestParam String email,
+                                                              @PathVariable long categoryId) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        CategoryDto categoryDto = categoryService.getCategoryExpenseById(categoryId);
+        return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Update an existing income category",
@@ -121,11 +124,7 @@ public class CategoryController {
             @Email @RequestParam String email,
             @Valid @RequestBody CategoryDto updateCategoryDto) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         CategoryDto categoryDto = categoryService.updateCategoryIncome(updateCategoryDto, email);
 
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
@@ -142,11 +141,7 @@ public class CategoryController {
             @Email @RequestParam String email,
             @Valid @RequestBody CategoryDto updateCategoryDto) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         CategoryDto categoryDto = categoryService.updateCategoryExpense(updateCategoryDto, email);
 
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
@@ -163,11 +158,7 @@ public class CategoryController {
             @Email @RequestParam String email,
             @PathVariable Long categoryId) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         categoryService.deleteCategoryIncomeById(categoryId, email);
 
         return ResponseEntity.ok().build();
@@ -184,11 +175,7 @@ public class CategoryController {
             @Email @RequestParam String email,
             @PathVariable Long categoryId) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         categoryService.deleteCategoryExpenseById(categoryId, email);
 
         return ResponseEntity.ok().build();

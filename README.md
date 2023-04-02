@@ -26,7 +26,17 @@ This controller provides endpoints for managing income and expense categories fo
 - **GET -- /categories/expense**: Retrieves a list of expense categories for a user, based on the user's email, starting index, and maximum number of results.
 - **POST -- /categories/income**: Creates a new income category for a user, based on the user's email and a new category DTO provided in the request body.
 - **POST -- /categories/expense**: Creates a new expense category for a user, based on the user's email and a new category DTO provided in the request body.
-The endpoints use the CategoryService class to perform business logic related to categories, and the JwtProvider class to verify the JWT tokens provided in the requests. The code also includes validation annotations to ensure that the request parameters and body are valid.
+- **PUT -- /categories/income**: Updates an income category for a user, based on the user's email and an update category DTO provided in the request body.
+- **PUT -- /categories/expense**: Updates an expense category for a user, based on the user's email and an update category DTO provided in the request body.
+- **DELETE -- /categories/income/{categoryId}**: Delete an existing income category by id.
+- **DELETE -- /categories/expense/{categoryId}**: Delete an existing expense category by id.
+
+This controller provides endpoints for managing income and expense categories for a user.
+
+- **GET -- /accounts**: Retrieves a list of accounts for a user, based on the user's email, starting index, and maximum number of results.
+- **POST -- /accounts**: Creates a new account for a user, based on the user's email and a new category DTO provided in the request body.
+- **PUT -- /accounts**: Updates an account for a user, based on the user's email and an update accounts DTO provided in the request body.
+- **DELETE -- /accounts/{accountId}**: Delete an existing account by id.
 
 Backend Technology
 The application is built using Java 11 and Spring Boot, along with several other technologies:

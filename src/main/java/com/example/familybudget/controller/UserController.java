@@ -1,11 +1,10 @@
 package com.example.familybudget.controller;
 
+import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.UserDto;
 import com.example.familybudget.entity.User;
-import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.mapper.UserMapper;
 import com.example.familybudget.repository.UserRepository;
-import com.example.familybudget.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ import javax.validation.constraints.Email;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final JwtProvider jwtProvider;
+    private final ControllerUtil controllerUtil;
     private static final String AUTHORIZATION = "Authorization";
 
     @GetMapping("/{userId}")
@@ -29,11 +28,7 @@ public class UserController {
                                                 @Email @RequestParam String email,
                                                 @PathVariable long userId) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         User user = userRepository.getById(userId);
         return new ResponseEntity<>(UserMapper.INSTANCE.toUserDto(user), HttpStatus.OK);
     }

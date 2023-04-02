@@ -1,5 +1,6 @@
 package com.example.familybudget.controller;
 
+import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.AuthenticationRequest;
 import com.example.familybudget.dto.AuthenticationResponse;
 import com.example.familybudget.dto.RegistrationRequest;
@@ -29,6 +30,7 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private final ControllerUtil controllerUtil;
     private static final String AUTHORIZATION = "Authorization";
 
     @ApiOperation(value = "Registration new user", notes = "The email, firstName, lastName, currency, password and " +
@@ -81,11 +83,7 @@ public class AuthController {
     public ResponseEntity<String>  logout(@RequestHeader(AUTHORIZATION) String token,
                                                 @Email @RequestParam String email) {
 
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
-        if (!emailDec.equals(emailJwt)) {
-            throw new ForbiddenException("The email from the requestBody does not match the email from the token");
-        }
+        controllerUtil.validateTokenAndEmail(email, token);
         jwtProvider.blacklistToken(token.substring(7));
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }

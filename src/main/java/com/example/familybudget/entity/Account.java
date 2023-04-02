@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,4 +23,6 @@ public class Account extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
 }

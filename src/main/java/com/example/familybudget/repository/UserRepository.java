@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     default User getById(Long id) {
         return findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("User with id (" + id + ") not found"))
+                () -> new EntityNotFoundException(String.format("User with id (%d) not found", id))
         );
     }
 }

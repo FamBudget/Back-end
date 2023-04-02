@@ -21,6 +21,7 @@
         <mapstruct>1.5.3.Final</mapstruct>
         <jjwt>0.9.1</jjwt>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -101,7 +102,6 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 

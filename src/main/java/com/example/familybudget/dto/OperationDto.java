@@ -15,7 +15,5 @@ public class OperationDto {
     private Long categoryId;
     @NotEmpty
     private Long accountId;
-    @NotEmpty
-    private Long userId;
     private LocalDateTime createdOn;
 }

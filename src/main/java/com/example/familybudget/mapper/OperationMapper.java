@@ -16,7 +16,6 @@ public interface OperationMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "account.id", target = "accountId")
-    @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "createdOn", target = "createdOn")
     OperationDto toOperationDto(OperationIncome operation);
 
@@ -25,7 +24,6 @@ public interface OperationMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "account.id", target = "accountId")
-    @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "createdOn", target = "createdOn")
     OperationDto toOperationDto(OperationExpense operation);
 

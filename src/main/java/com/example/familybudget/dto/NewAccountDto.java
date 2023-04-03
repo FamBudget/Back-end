@@ -11,7 +11,7 @@ public class NewAccountDto {
     @NotBlank
     private String name;
     @NotNull
-    private Float amount;
+    private Double amount;
     private String currency;
     private LocalDateTime createdOn;
 }

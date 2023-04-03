@@ -16,7 +16,7 @@ public class Account extends BaseEntity {
     @Column(name = "name")
     private String name;
     @Column(name = "amount")
-    private Float amount;
+    private Double amount;
     @Enumerated(EnumType.STRING)
     @Column(name = "currency")
     private Currency currency;

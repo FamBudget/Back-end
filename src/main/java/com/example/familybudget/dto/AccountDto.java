@@ -13,7 +13,7 @@ public class AccountDto {
     @NotBlank
     private String name;
     @NotNull
-    private Float amount;
+    private Double amount;
     private String currency;
     private LocalDateTime createdOn;
 }

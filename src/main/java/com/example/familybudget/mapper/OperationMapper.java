@@ -14,7 +14,7 @@ public interface OperationMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "amount", target = "amount")
     @Mapping(source = "description", target = "description")
-    @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "categoryIncome.id", target = "categoryId")
     @Mapping(source = "account.id", target = "accountId")
     @Mapping(source = "createdOn", target = "createdOn")
     OperationDto toOperationDto(OperationIncome operation);
@@ -22,25 +22,25 @@ public interface OperationMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "amount", target = "amount")
     @Mapping(source = "description", target = "description")
-    @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "categoryExpense.id", target = "categoryId")
     @Mapping(source = "account.id", target = "accountId")
     @Mapping(source = "createdOn", target = "createdOn")
     OperationDto toOperationDto(OperationExpense operation);
 
 
-    @Mapping(source = "OperationDto.amount", target = "amount")
-    @Mapping(source = "OperationDto.description", target = "description")
+    @Mapping(source = "operationDto.amount", target = "amount")
+    @Mapping(source = "operationDto.description", target = "description")
     @Mapping(source = "category", target = "categoryIncome")
     @Mapping(source = "account", target = "account")
     @Mapping(source = "user", target = "user")
-    @Mapping(source = "OperationDto.createdOn", target = "createdOn")
+    @Mapping(source = "operationDto.createdOn", target = "createdOn")
     OperationIncome toOperationIncome(OperationDto operationDto, CategoryIncome category, Account account, User user);
 
-    @Mapping(source = "OperationDto.amount", target = "amount")
-    @Mapping(source = "OperationDto.description", target = "description")
+    @Mapping(source = "operationDto.amount", target = "amount")
+    @Mapping(source = "operationDto.description", target = "description")
     @Mapping(source = "category", target = "categoryExpense")
     @Mapping(source = "account", target = "account")
     @Mapping(source = "user", target = "user")
-    @Mapping(source = "OperationDto.createdOn", target = "createdOn")
+    @Mapping(source = "operationDto.createdOn", target = "createdOn")
     OperationExpense toOperationExpense(OperationDto operationDto, CategoryExpense category, Account account, User user);
 }

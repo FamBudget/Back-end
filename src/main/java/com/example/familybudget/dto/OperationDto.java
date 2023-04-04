@@ -2,18 +2,20 @@ package com.example.familybudget.dto;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 @Data
 public class OperationDto {
     private Long id;
-    @NotEmpty
+    @NotNull
+    @Positive
     private Double amount;
     private String description;
-    @NotEmpty
+    @NotNull
     private Long categoryId;
-    @NotEmpty
+    @NotNull
     private Long accountId;
     private LocalDateTime createdOn;
 }

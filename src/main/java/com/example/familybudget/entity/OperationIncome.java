@@ -18,7 +18,7 @@ public class OperationIncome extends BaseEntity {
     @Column(name = "description")
     private String description;
     @ManyToOne
-    @JoinColumn(name = "category_income_id")
+    @JoinColumn(name = "category_id")
     private CategoryIncome categoryIncome;
     @ManyToOne
     @JoinColumn(name = "account_id")

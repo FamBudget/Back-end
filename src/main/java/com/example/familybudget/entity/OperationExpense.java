@@ -19,7 +19,7 @@ public class OperationExpense extends BaseEntity {
     private String description;
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private CategoryExpense categoryExpense;
+    private CategoryExpense category;
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;

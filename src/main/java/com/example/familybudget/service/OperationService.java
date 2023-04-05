@@ -1,17 +1,23 @@
 package com.example.familybudget.service;
 
 import com.example.familybudget.dto.OperationDto;
+import com.example.familybudget.dto.ResponseOperation;
 import com.example.familybudget.entity.*;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.mapper.OperationMapper;
 import com.example.familybudget.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +31,39 @@ public class OperationService {
     private final CategoryExpenseRepository categoryExpenseRepository;
     private final UserRepository userRepository;
 
+    public List<ResponseOperation> getOperationsExpense(String email,
+                                                        LocalDateTime startDate,
+                                                        LocalDateTime endDate,
+                                                        SortParameter sort,
+                                                        boolean sortDesc,
+                                                        int from,
+                                                        int size) {
+        User user = findUserByEmail(email);
+
+        String sortParameter = "";
+        if (sort == SortParameter.DATE) {
+            sortParameter = "createdOn";
+        } else if (sort == SortParameter.CATEGORY) {
+            sortParameter = "category";
+        } else if (sort == SortParameter.AMOUNT) {
+            sortParameter = "amount";
+        } else if (sort == SortParameter.ACCOUNT) {
+            sortParameter = "account";
+        }
+        Pageable page = PageRequest.of(from / size, size,
+                sortDesc ? Sort.by(sortParameter).descending() :  Sort.by(sortParameter).ascending());
+
+        LocalDateTime start = startDate == null ? LocalDateTime.now().minusYears(999) : startDate;
+        LocalDateTime end = endDate == null ? LocalDateTime.now() : endDate;
+        List<ResponseOperation> operationsDto = operationExpenseRepository
+                .getAllByUserAndCreatedOn_MinAndCreatedOn_Max(user, start, end, page)
+                .stream().map(OperationMapper.INSTANCE::toOperationDto).collect(Collectors.toList());
+        log.debug("Got operations expense by user: {}. Operations counts: {}", user, operationsDto.size());
+        return operationsDto;
+    }
+
     @Transactional
-    public OperationDto addOperationExpense(OperationDto newOperationDto, String email) {
+    public ResponseOperation addOperationExpense(OperationDto newOperationDto, String email) {
         User user = findUserByEmail(email);
         CategoryExpense categoryExpense = categoryExpenseRepository.getById(newOperationDto.getCategoryId());
         String emailFromCategory = categoryExpense.getUser().getEmail();
@@ -51,14 +88,14 @@ public class OperationService {
         if (operationExpense.getCreatedOn() == null) {
             operationExpense.setCreatedOn(LocalDateTime.now());
         }
-        OperationExpense operationExpenseSaved = operationExpenseRepository.save(operationExpense);
+        OperationExpense operationSaved = operationExpenseRepository.save(operationExpense);
 
         log.debug("Added new operation of expense: {} by user: {}", operationExpense, user);
-        return OperationMapper.INSTANCE.toOperationDto(operationExpenseSaved);
+        return OperationMapper.INSTANCE.toOperationDto(operationSaved);
     }
 
     @Transactional
-    public OperationDto addOperationIncome(OperationDto newOperationDto, String email) {
+    public ResponseOperation addOperationIncome(OperationDto newOperationDto, String email) {
         User user = findUserByEmail(email);
         CategoryIncome categoryIncome = categoryIncomeRepository.getById(newOperationDto.getCategoryId());
         String emailFromCategory = categoryIncome.getUser().getEmail();
@@ -81,10 +118,10 @@ public class OperationService {
         if (operationIncome.getCreatedOn() == null) {
             operationIncome.setCreatedOn(LocalDateTime.now());
         }
-        OperationIncome operationIncomeSaved = operationIncomeRepository.save(operationIncome);
+        OperationIncome operationSaved = operationIncomeRepository.save(operationIncome);
 
         log.debug("Added new operation of income: {} by user: {}", operationIncome, user);
-        return OperationMapper.INSTANCE.toOperationDto(operationIncomeSaved);
+        return OperationMapper.INSTANCE.toOperationDto(operationSaved);
     }
 
     private User findUserByEmail(String email) {

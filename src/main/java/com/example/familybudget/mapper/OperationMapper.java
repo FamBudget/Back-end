@@ -1,6 +1,7 @@
 package com.example.familybudget.mapper;
 
 import com.example.familybudget.dto.OperationDto;
+import com.example.familybudget.dto.ResponseOperation;
 import com.example.familybudget.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,23 +15,23 @@ public interface OperationMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "amount", target = "amount")
     @Mapping(source = "description", target = "description")
-    @Mapping(source = "categoryIncome.id", target = "categoryId")
-    @Mapping(source = "account.id", target = "accountId")
+    @Mapping(source = "category", target = "category")
+    @Mapping(source = "account", target = "account")
     @Mapping(source = "createdOn", target = "createdOn")
-    OperationDto toOperationDto(OperationIncome operation);
+    ResponseOperation toOperationDto(OperationIncome operation);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "amount", target = "amount")
     @Mapping(source = "description", target = "description")
-    @Mapping(source = "categoryExpense.id", target = "categoryId")
-    @Mapping(source = "account.id", target = "accountId")
+    @Mapping(source = "category", target = "category")
+    @Mapping(source = "account", target = "account")
     @Mapping(source = "createdOn", target = "createdOn")
-    OperationDto toOperationDto(OperationExpense operation);
+    ResponseOperation toOperationDto(OperationExpense operation);
 
 
     @Mapping(source = "operationDto.amount", target = "amount")
     @Mapping(source = "operationDto.description", target = "description")
-    @Mapping(source = "category", target = "categoryIncome")
+    @Mapping(source = "category", target = "category")
     @Mapping(source = "account", target = "account")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "operationDto.createdOn", target = "createdOn")
@@ -38,7 +39,7 @@ public interface OperationMapper {
 
     @Mapping(source = "operationDto.amount", target = "amount")
     @Mapping(source = "operationDto.description", target = "description")
-    @Mapping(source = "category", target = "categoryExpense")
+    @Mapping(source = "category", target = "category")
     @Mapping(source = "account", target = "account")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "operationDto.createdOn", target = "createdOn")

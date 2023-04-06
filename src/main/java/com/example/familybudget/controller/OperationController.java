@@ -59,6 +59,34 @@ public class OperationController {
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get income operations by user email")
+    @GetMapping("/income")
+    public ResponseEntity<List<ResponseOperation>> getOperationsIncome(
+            @RequestHeader(AUTHORIZATION) String token,
+            @Email @RequestParam String email,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
+            @RequestParam(required = false) LocalDateTime startDate,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
+            @RequestParam(required = false) LocalDateTime endDate,
+            @RequestParam(required = false, defaultValue = "DATE") String sort,
+            @RequestParam(required = false, defaultValue = "true") Boolean sortDesc,
+            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+            @Positive @RequestParam(defaultValue = "10") Integer size) {
+
+        SortParameter sortParameter;
+
+        try {
+            sortParameter =  SortParameter.valueOf(sort);
+        } catch (IllegalArgumentException e) {
+            throw new ForbiddenException("Unknown sort: " + sort);
+        }
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        List<ResponseOperation> operationsDto = operationService
+                .getOperationsIncome(email, startDate, endDate, sortParameter, sortDesc, from, size);
+        return new ResponseEntity<>(operationsDto, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Create a new operation of income")
     @PostMapping("/income")
     ResponseEntity<ResponseOperation> addOperationIncome(

@@ -44,11 +44,11 @@ public class OperationService {
         if (sort == SortParameter.DATE) {
             sortParameter = "createdOn";
         } else if (sort == SortParameter.CATEGORY) {
-            sortParameter = "category";
+            sortParameter = "category.name";
         } else if (sort == SortParameter.AMOUNT) {
             sortParameter = "amount";
         } else if (sort == SortParameter.ACCOUNT) {
-            sortParameter = "account";
+            sortParameter = "account.name";
         }
         Pageable page = PageRequest.of(from / size, size,
                 sortDesc ? Sort.by(sortParameter).descending() :  Sort.by(sortParameter).ascending());
@@ -56,6 +56,37 @@ public class OperationService {
         LocalDateTime start = startDate == null ? LocalDateTime.now().minusYears(999) : startDate;
         LocalDateTime end = endDate == null ? LocalDateTime.now() : endDate;
         List<ResponseOperation> operationsDto = operationExpenseRepository
+                .getAllByUserAndCreatedOn_MinAndCreatedOn_Max(user, start, end, page)
+                .stream().map(OperationMapper.INSTANCE::toOperationDto).collect(Collectors.toList());
+        log.debug("Got operations expense by user: {}. Operations counts: {}", user, operationsDto.size());
+        return operationsDto;
+    }
+
+    public List<ResponseOperation> getOperationsIncome(String email,
+                                                        LocalDateTime startDate,
+                                                        LocalDateTime endDate,
+                                                        SortParameter sort,
+                                                        boolean sortDesc,
+                                                        int from,
+                                                        int size) {
+        User user = findUserByEmail(email);
+
+        String sortParameter = "";
+        if (sort == SortParameter.DATE) {
+            sortParameter = "createdOn";
+        } else if (sort == SortParameter.CATEGORY) {
+            sortParameter = "category.name";
+        } else if (sort == SortParameter.AMOUNT) {
+            sortParameter = "amount";
+        } else if (sort == SortParameter.ACCOUNT) {
+            sortParameter = "account.name";
+        }
+        Pageable page = PageRequest.of(from / size, size,
+                sortDesc ? Sort.by(sortParameter).descending() :  Sort.by(sortParameter).ascending());
+
+        LocalDateTime start = startDate == null ? LocalDateTime.now().minusYears(999) : startDate;
+        LocalDateTime end = endDate == null ? LocalDateTime.now() : endDate;
+        List<ResponseOperation> operationsDto = operationIncomeRepository
                 .getAllByUserAndCreatedOn_MinAndCreatedOn_Max(user, start, end, page)
                 .stream().map(OperationMapper.INSTANCE::toOperationDto).collect(Collectors.toList());
         log.debug("Got operations expense by user: {}. Operations counts: {}", user, operationsDto.size());

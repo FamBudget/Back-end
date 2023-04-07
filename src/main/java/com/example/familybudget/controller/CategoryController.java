@@ -99,7 +99,7 @@ public class CategoryController {
                                                 @PathVariable long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.getCategoryIncomeById(categoryId);
+        CategoryDto categoryDto = categoryService.getCategoryIncomeById(categoryId, email);
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 
@@ -109,7 +109,7 @@ public class CategoryController {
                                                               @PathVariable long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.getCategoryExpenseById(categoryId);
+        CategoryDto categoryDto = categoryService.getCategoryExpenseById(categoryId, email);
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 

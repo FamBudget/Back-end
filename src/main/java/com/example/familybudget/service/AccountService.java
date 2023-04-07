@@ -51,8 +51,12 @@ public class AccountService {
         return responseAccountDto;
     }
 
-    public AccountDto getAccountById(long id) {
+    public AccountDto getAccountById(long id, String email) {
+        findUserByEmail(email);
         Account account = accountRepository.getById(id);
+        if (!email.equals(account.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this account");
+        }
         AccountDto accountDto = AccountMapper.INSTANCE.toAccountDto(account);
 
         log.debug("Got account {} by id", account);
@@ -60,9 +64,9 @@ public class AccountService {
     }
 
     public AccountDto updateAccount(AccountDto accountDto, String email) {
-        User user = findUserByEmail(email);
+        findUserByEmail(email);
         Account account = accountRepository.getById(accountDto.getId());
-        if (!user.getId().equals(account.getUser().getId())) {
+        if (!email.equals(account.getUser().getEmail())) {
             throw new ForbiddenException("This user can't update this account");
         }
         account.setName(accountDto.getName());
@@ -73,9 +77,9 @@ public class AccountService {
     }
 
     public void deleteAccountById(long id, String email) {
-        User user = findUserByEmail(email);
+        findUserByEmail(email);
         Account account = accountRepository.getById(id);
-        if (!user.getId().equals(account.getUser().getId())) {
+        if (!email.equals(account.getUser().getEmail())) {
             throw new ForbiddenException("This user can't delete this account");
         }
         accountRepository.deleteById(id);

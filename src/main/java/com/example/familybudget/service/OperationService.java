@@ -125,6 +125,30 @@ public class OperationService {
         return OperationMapper.INSTANCE.toOperationDto(operationSaved);
     }
 
+    public ResponseOperation getOperationExpenseById(long id, String email) {
+        findUserByEmail(email);
+        OperationExpense operation = operationExpenseRepository.getById(id);
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this operation");
+        }
+        ResponseOperation operationDto = OperationMapper.INSTANCE.toOperationDto(operation);
+
+        log.debug("Got operation income {} by id", operation);
+        return operationDto;
+    }
+
+    public ResponseOperation getOperationIncomeById(long id, String email) {
+        findUserByEmail(email);
+        OperationIncome operation = operationIncomeRepository.getById(id);
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this operation");
+        }
+        ResponseOperation operationDto = OperationMapper.INSTANCE.toOperationDto(operation);
+
+        log.debug("Got operation income {} by id", operation);
+        return operationDto;
+    }
+
     @Transactional
     public ResponseOperation addOperationIncome(OperationDto newOperationDto, String email) {
         User user = findUserByEmail(email);

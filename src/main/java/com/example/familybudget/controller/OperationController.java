@@ -87,6 +87,26 @@ public class OperationController {
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
+    @GetMapping("/expense/{operationId}")
+    public ResponseEntity<ResponseOperation>  getOperationExpenseById(@RequestHeader(AUTHORIZATION) String token,
+                                                               @Email @RequestParam String email,
+                                                               @PathVariable long operationId) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        ResponseOperation operationDto = operationService.getOperationExpenseById(operationId, email);
+        return new ResponseEntity<>(operationDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/income/{operationId}")
+    public ResponseEntity<ResponseOperation>  getOperationIncomeById(@RequestHeader(AUTHORIZATION) String token,
+                                                                      @Email @RequestParam String email,
+                                                                      @PathVariable long operationId) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        ResponseOperation operationDto = operationService.getOperationIncomeById(operationId, email);
+        return new ResponseEntity<>(operationDto, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Create a new operation of income")
     @PostMapping("/income")
     ResponseEntity<ResponseOperation> addOperationIncome(

@@ -49,16 +49,24 @@ public class CategoryService {
         return categoriesDto;
     }
 
-    public CategoryDto getCategoryIncomeById(long id) {
+    public CategoryDto getCategoryIncomeById(long id, String email) {
+        findUserByEmail(email);
         CategoryIncome category = categoryIncomeRepository.getById(id);
+        if (!email.equals(category.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this category");
+        }
         CategoryDto categoryDto = CategoryMapper.INSTANCE.toCategoryDto(category);
 
         log.debug("Got category income {} by id", category);
         return categoryDto;
     }
 
-    public CategoryDto getCategoryExpenseById(long id) {
+    public CategoryDto getCategoryExpenseById(long id, String email) {
+        findUserByEmail(email);
         CategoryExpense category = categoryExpenseRepository.getById(id);
+        if (!email.equals(category.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this category");
+        }
         CategoryDto categoryDto = CategoryMapper.INSTANCE.toCategoryDto(category);
 
         log.debug("Got category expense {} by id", category);
@@ -82,9 +90,9 @@ public class CategoryService {
     }
 
     public CategoryDto updateCategoryIncome(CategoryDto categoryDto, String email) {
-        User user = findUserByEmail(email);
+        findUserByEmail(email);
         CategoryIncome category = categoryIncomeRepository.getById(categoryDto.getId());
-        if (!user.getId().equals(category.getUser().getId())) {
+        if (!email.equals(category.getUser().getEmail())) {
             throw new ForbiddenException("This user can't update this category");
         }
         category.setName(categoryDto.getName());
@@ -94,9 +102,9 @@ public class CategoryService {
     }
 
     public CategoryDto updateCategoryExpense(CategoryDto categoryDto, String email) {
-        User user = findUserByEmail(email);
+        findUserByEmail(email);
         CategoryExpense category = categoryExpenseRepository.getById(categoryDto.getId());
-        if (!user.getId().equals(category.getUser().getId())) {
+        if (!email.equals(category.getUser().getEmail())) {
             throw new ForbiddenException("This user can't update this category");
         }
         category.setName(categoryDto.getName());
@@ -106,9 +114,9 @@ public class CategoryService {
     }
 
     public void deleteCategoryIncomeById(long id, String email) {
-        User user = findUserByEmail(email);
+        findUserByEmail(email);
         CategoryIncome category = categoryIncomeRepository.getById(id);
-        if (!user.getId().equals(category.getUser().getId())) {
+        if (!email.equals(category.getUser().getEmail())) {
             throw new ForbiddenException("This user can't delete this category");
         }
         categoryIncomeRepository.deleteById(id);
@@ -116,9 +124,9 @@ public class CategoryService {
     }
 
     public void deleteCategoryExpenseById(long id, String email) {
-        User user = findUserByEmail(email);
+        findUserByEmail(email);
         CategoryExpense category = categoryExpenseRepository.getById(id);
-        if (!user.getId().equals(category.getUser().getId())) {
+        if (!email.equals(category.getUser().getEmail())) {
             throw new ForbiddenException("This user can't delete this category");
         }
         categoryExpenseRepository.deleteById(id);

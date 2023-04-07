@@ -7,6 +7,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "categories_expense")
 public class CategoryExpense extends BaseEntity {

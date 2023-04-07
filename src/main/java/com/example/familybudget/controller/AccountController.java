@@ -66,7 +66,7 @@ public class AccountController {
                                                               @PathVariable long accountId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        AccountDto accountDto = accountService.getAccountById(accountId);
+        AccountDto accountDto = accountService.getAccountById(accountId, email);
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
     }
 

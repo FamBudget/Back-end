@@ -1,6 +1,9 @@
 package com.example.familybudget.service;
 
+import com.example.familybudget.dto.NewPasswordRequest;
+import com.example.familybudget.dto.ResponseResetPassword;
 import com.example.familybudget.entity.*;
+import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.repository.CategoryExpenseRepository;
 import com.example.familybudget.repository.CategoryIncomeRepository;
 import com.example.familybudget.repository.UserRepository;
@@ -30,28 +33,25 @@ public class UserService {
     private final List<String> categoryExpenseList = List.of("Category1", "Category2", "Category3");
 
     @Value("${link.to.email}")
-    private String link;
+    private String activationLink;
+    @Value("${link.reset.password}")
+    private String resetPasswordLink;
 
-    public void addUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-    }
-
-    public User registerUser(User user) {
+    public void registerUser(User user) {
 
         user.setRole(Role.USER);
         user.setStatus(Status.NOT_ACTIVE);
         user.setActivationCode(UUID.randomUUID().toString());
-        addUser(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
         String message = String.format(
                 "Hello, %s! \n" +
                         "Welcome to Family Budget. Please, visit next link: %s/%s",
-                user.getEmail(), link, user.getActivationCode());
+                user.getEmail(), activationLink, user.getActivationCode());
         emailProvider.send(user.getEmail(), "Activation Code", message);
-        return user;
     }
 
-    public User findByEmail(String email) {
+    private User findByEmail(String email) {
         User user = userRepository.findUserByEmail(email);
         log.debug("finding user by email: {}", email);
         if (user == null) {
@@ -64,15 +64,12 @@ public class UserService {
     public User findByEmailAndPassword(String email, String password) {
         User user = findByEmail(email);
         log.debug("finding user by email {} and password {}", email, password);
-        if (user != null) {
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                log.debug("user found");
-                return user;
-            } else {
-                throw new EntityNotFoundException("There is no " + email + " in the database with this password");
-            }
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            log.debug("user found");
+            return user;
+        } else {
+            throw new EntityNotFoundException("There is no " + email + " in the database with this password");
         }
-        return null;
     }
 
     public void activateUser(String code) {
@@ -97,8 +94,61 @@ public class UserService {
         }
 
         categoryIncomeRepository.saveAll(listIncome);
-        log.debug("Added new income categories for user: ", user);
+        log.debug("Added new income categories for user: {}", user);
         categoryExpenseRepository.saveAll(listExpense);
-        log.debug("Added new expense categories for user: ", user);
+        log.debug("Added new expense categories for user: {}", user);
+    }
+
+    public void requestResetPassword(String email) {
+        User user = findByEmail(email);
+        log.debug("repairing user password by email {}", email);
+
+        user.setActivationCode(UUID.randomUUID().toString());
+        userRepository.save(user);
+        String message = String.format(
+                "Hello, %s! \n" +
+                        "Follow the link to reset your password. If you did not make this request, then simply ignore this letter: %s/%s",
+                user.getEmail(), resetPasswordLink, user.getActivationCode());
+        emailProvider.send(user.getEmail(), "repair password", message);
+        log.debug("sending new password typing link");
+    }
+
+    public ResponseResetPassword verifyCode(String email, String code) {
+        User user = userRepository.findByActivationCode(code);
+        if (user == null) {
+            throw new EntityNotFoundException("Activation code not found");
+        }
+
+        if (!email.equals(user.getEmail())) {
+            throw new ForbiddenException("This code does not apply to this user");
+        }
+
+        ResponseResetPassword responseResetPassword = new ResponseResetPassword();
+        responseResetPassword.setStatus("success");
+        responseResetPassword.setEmail(user.getEmail());
+
+        log.debug("starting the user password reset process {}: ", user.getEmail());
+        return responseResetPassword;
+    }
+
+    public ResponseResetPassword changePassword(String email, String code, NewPasswordRequest passwordRequest) {
+        User user = userRepository.findByActivationCode(code);
+        if (user == null) {
+            throw new EntityNotFoundException("Activation code not found");
+        }
+        if (!email.equals(user.getEmail())) {
+            throw new ForbiddenException("This code does not apply to this user");
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
+        user.setActivationCode(null);
+        userRepository.save(user);
+
+        ResponseResetPassword responseResetPassword = new ResponseResetPassword();
+        responseResetPassword.setStatus("success");
+        responseResetPassword.setEmail(user.getEmail());
+
+        log.debug("User password was was changed: ");
+        return responseResetPassword;
     }
 }

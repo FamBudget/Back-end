@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,7 +26,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto>  getUserById(@RequestHeader(AUTHORIZATION) String token,
-                                                @Email @RequestParam String email,
+                                                @NotBlank @Email @RequestParam String email,
                                                 @PathVariable long userId) {
 
         controllerUtil.validateTokenAndEmail(email, token);

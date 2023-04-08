@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -51,7 +52,7 @@ public class AccountController {
     @PostMapping
     ResponseEntity<AccountDto> addAccount(
             @RequestBody @Valid NewAccountDto newAccountDto,
-            @RequestParam @Email String email,
+            @RequestParam @NotBlank @Email String email,
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -62,8 +63,8 @@ public class AccountController {
 
     @GetMapping("/{accountId}")
     public ResponseEntity<AccountDto>  getAccountById(@RequestHeader(AUTHORIZATION) String token,
-                                                              @Email @RequestParam String email,
-                                                              @PathVariable long accountId) {
+                                                      @NotBlank @Email @RequestParam String email,
+                                                      @PathVariable long accountId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
         AccountDto accountDto = accountService.getAccountById(accountId, email);
@@ -78,7 +79,7 @@ public class AccountController {
     @PutMapping
     public ResponseEntity<AccountDto> updateAccount(
             @RequestHeader(AUTHORIZATION) String token,
-            @RequestParam @Email String email,
+            @RequestParam @NotBlank @Email String email,
             @RequestBody @Valid AccountDto updateAccountDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -95,7 +96,7 @@ public class AccountController {
     @DeleteMapping("/{accountId}")
     public ResponseEntity<?> deleteAccount(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @PathVariable Long accountId) {
 
         controllerUtil.validateTokenAndEmail(email, token);

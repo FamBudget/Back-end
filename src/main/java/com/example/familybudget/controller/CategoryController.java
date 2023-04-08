@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -34,7 +35,7 @@ public class CategoryController {
     @GetMapping("/income")
     public ResponseEntity<List<CategoryDto>> getCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
@@ -50,7 +51,7 @@ public class CategoryController {
     @GetMapping("/expense")
     public ResponseEntity<List<CategoryDto>> getCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
@@ -67,7 +68,7 @@ public class CategoryController {
     @PostMapping("/income")
     public ResponseEntity<CategoryDto> addCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @Valid @RequestBody NewCategoryDto newCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -84,7 +85,7 @@ public class CategoryController {
     @PostMapping("/expense")
     public ResponseEntity<CategoryDto> addCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @Valid @RequestBody NewCategoryDto newCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -95,8 +96,8 @@ public class CategoryController {
 
     @GetMapping("/income/{categoryId}")
     public ResponseEntity<CategoryDto>  getCategoryIncomeById(@RequestHeader(AUTHORIZATION) String token,
-                                                @Email @RequestParam String email,
-                                                @PathVariable long categoryId) {
+                                                              @NotBlank @Email @RequestParam String email,
+                                                              @PathVariable long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
         CategoryDto categoryDto = categoryService.getCategoryIncomeById(categoryId, email);
@@ -105,8 +106,8 @@ public class CategoryController {
 
     @GetMapping("/expense/{categoryId}")
     public ResponseEntity<CategoryDto>  getCategoryExpenseById(@RequestHeader(AUTHORIZATION) String token,
-                                                              @Email @RequestParam String email,
-                                                              @PathVariable long categoryId) {
+                                                               @NotBlank @Email @RequestParam String email,
+                                                               @PathVariable long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
         CategoryDto categoryDto = categoryService.getCategoryExpenseById(categoryId, email);
@@ -121,7 +122,7 @@ public class CategoryController {
     @PutMapping("/income")
     public ResponseEntity<CategoryDto> updateCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @Valid @RequestBody CategoryDto updateCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -138,7 +139,7 @@ public class CategoryController {
     @PutMapping("/expense")
     public ResponseEntity<CategoryDto> updateCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @Valid @RequestBody CategoryDto updateCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -155,7 +156,7 @@ public class CategoryController {
     @DeleteMapping("/income/{categoryId}")
     public ResponseEntity<?> deleteCategoriesIncome(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @PathVariable Long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -172,7 +173,7 @@ public class CategoryController {
     @DeleteMapping("/expense/{categoryId}")
     public ResponseEntity<?> deleteCategoriesExpense(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @PathVariable Long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);

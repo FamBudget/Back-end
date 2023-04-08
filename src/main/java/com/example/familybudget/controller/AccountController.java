@@ -35,7 +35,7 @@ public class AccountController {
     @GetMapping
     public ResponseEntity<List<AccountDto>> getAccounts(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 

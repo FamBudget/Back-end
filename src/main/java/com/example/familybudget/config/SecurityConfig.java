@@ -23,6 +23,7 @@ public class SecurityConfig {
     private static final String REGISTRATION_ENDPOINT = "/registration";
     private static final String AUTHENTICATION_ENDPOINT = "/authentication";
     private static final String ACTIVATE_ENDPOINT = "/activate/*";
+    private static final String REPAIR_PASSWORD_ENDPOINT = "/repair";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,6 +41,7 @@ public class SecurityConfig {
                 .antMatchers(REGISTRATION_ENDPOINT).permitAll()
                 .antMatchers(ACTIVATE_ENDPOINT).permitAll()
                 .antMatchers(AUTHENTICATION_ENDPOINT).permitAll()
+                .antMatchers(REPAIR_PASSWORD_ENDPOINT).permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(authenticationEntryPoint)

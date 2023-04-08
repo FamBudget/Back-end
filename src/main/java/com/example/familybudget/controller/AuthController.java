@@ -1,10 +1,7 @@
 package com.example.familybudget.controller;
 
 import com.example.familybudget.controller.util.ControllerUtil;
-import com.example.familybudget.dto.AuthenticationRequest;
-import com.example.familybudget.dto.AuthenticationResponse;
-import com.example.familybudget.dto.RegistrationRequest;
-import com.example.familybudget.dto.UserDto;
+import com.example.familybudget.dto.*;
 import com.example.familybudget.entity.Currency;
 import com.example.familybudget.entity.Status;
 import com.example.familybudget.entity.User;
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @RequiredArgsConstructor
 @RestController
@@ -72,7 +70,7 @@ public class AuthController {
 
     @ApiOperation(value = "Activation registered user", notes = "Returns a result about the activation status")
     @GetMapping("/activate/{code}")
-    public ResponseEntity<String> activate(@PathVariable String code) {
+    public ResponseEntity<String> activate(@PathVariable @NotBlank String code) {
 
         userService.activateUser(code);
             return new ResponseEntity<>("User activated", HttpStatus.OK);
@@ -81,10 +79,34 @@ public class AuthController {
     @ApiOperation(value = "Logout user", notes = "Returns the token success lock result")
     @PostMapping("/auth/logout")
     public ResponseEntity<String>  logout(@RequestHeader(AUTHORIZATION) String token,
-                                                @Email @RequestParam String email) {
+                                          @NotBlank @Email @RequestParam String email) {
 
         controllerUtil.validateTokenAndEmail(email, token);
         jwtProvider.blacklistToken(token.substring(7));
         return new ResponseEntity<>("Success", HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Repair password send link")
+    @GetMapping("/reset-password")
+    public ResponseEntity<?>  requestResetPassword(@NotBlank @Email @RequestParam String email) {
+        userService.requestResetPassword(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "verify code")
+    @PostMapping("/reset-password/{code}")
+    public ResponseEntity<ResponseResetPassword> verifyCode(@NotBlank @Email @RequestParam String email,
+                                                            @PathVariable @NotBlank String code) {
+        ResponseResetPassword resetPassword = userService.verifyCode(email, code);
+        return new ResponseEntity<>(resetPassword, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Change password")
+    @PutMapping("/change-password/{code}")
+    public ResponseEntity<ResponseResetPassword>  changePassword(@NotBlank @Email @RequestParam String email,
+                                                                 @PathVariable @NotBlank String code,
+                                                                 @RequestBody @Valid NewPasswordRequest newPasswordRequest) {
+        ResponseResetPassword resetPassword = userService.changePassword(email, code, newPasswordRequest);
+        return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 }

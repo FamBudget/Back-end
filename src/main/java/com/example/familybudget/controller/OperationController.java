@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -35,7 +36,7 @@ public class OperationController {
     @GetMapping("/expense")
     public ResponseEntity<List<ResponseOperation>> getOperationsExpense(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime startDate,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -63,7 +64,7 @@ public class OperationController {
     @GetMapping("/income")
     public ResponseEntity<List<ResponseOperation>> getOperationsIncome(
             @RequestHeader(AUTHORIZATION) String token,
-            @Email @RequestParam String email,
+            @NotBlank @Email @RequestParam String email,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime startDate,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -89,7 +90,7 @@ public class OperationController {
 
     @GetMapping("/expense/{operationId}")
     public ResponseEntity<ResponseOperation>  getOperationExpenseById(@RequestHeader(AUTHORIZATION) String token,
-                                                               @Email @RequestParam String email,
+                                                                      @NotBlank @Email @RequestParam String email,
                                                                @PathVariable long operationId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -99,8 +100,8 @@ public class OperationController {
 
     @GetMapping("/income/{operationId}")
     public ResponseEntity<ResponseOperation>  getOperationIncomeById(@RequestHeader(AUTHORIZATION) String token,
-                                                                      @Email @RequestParam String email,
-                                                                      @PathVariable long operationId) {
+                                                                     @NotBlank @Email @RequestParam String email,
+                                                                     @PathVariable long operationId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
         ResponseOperation operationDto = operationService.getOperationIncomeById(operationId, email);
@@ -111,7 +112,7 @@ public class OperationController {
     @PostMapping("/income")
     ResponseEntity<ResponseOperation> addOperationIncome(
             @RequestBody @Valid OperationDto newOperation,
-            @RequestParam @Email String email,
+            @NotBlank @RequestParam @Email String email,
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
@@ -124,7 +125,7 @@ public class OperationController {
     @PostMapping("/expense")
     ResponseEntity<ResponseOperation> addOperationExpense(
             @RequestBody @Valid OperationDto newOperation,
-            @RequestParam @Email String email,
+            @NotBlank @RequestParam @Email String email,
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);

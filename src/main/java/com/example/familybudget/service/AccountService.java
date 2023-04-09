@@ -2,6 +2,7 @@ package com.example.familybudget.service;
 
 import com.example.familybudget.dto.AccountDto;
 import com.example.familybudget.dto.NewAccountDto;
+import com.example.familybudget.dto.UpdateAccount;
 import com.example.familybudget.entity.Account;
 import com.example.familybudget.entity.User;
 import com.example.familybudget.exception.ForbiddenException;
@@ -63,17 +64,25 @@ public class AccountService {
         return accountDto;
     }
 
-    public AccountDto updateAccount(AccountDto accountDto, String email) {
+    public AccountDto updateAccount(UpdateAccount updateAccount, String email) {
         findUserByEmail(email);
-        Account account = accountRepository.getById(accountDto.getId());
+        Account account = accountRepository.getById(updateAccount.getId());
         if (!email.equals(account.getUser().getEmail())) {
             throw new ForbiddenException("This user can't update this account");
         }
-        account.setName(accountDto.getName());
-        account.setAmount(accountDto.getAmount());
-        AccountDto updatedAccountDto = AccountMapper.INSTANCE.toAccountDto(accountRepository.save(account));
+        account.setName(updateAccount.getName());
+        double oldStartAmount = account.getStartAmount();
+        double newStartAmount = updateAccount.getStartAmount();
+        double newAmount = account.getAmount() - oldStartAmount + newStartAmount;
+        if (newAmount < 0.0) {
+            throw new ForbiddenException("The total invoice amount is negative");
+        }
+        account.setStartAmount(newStartAmount);
+        account.setAmount(newAmount);
+        account.setCreatedOn(updateAccount.getCreatedOn());
+        AccountDto accountDto = AccountMapper.INSTANCE.toAccountDto(accountRepository.save(account));
         log.debug("Account: {} was updated", account.getId());
-        return updatedAccountDto;
+        return accountDto;
     }
 
     public void deleteAccountById(long id, String email) {

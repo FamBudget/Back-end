@@ -4,6 +4,7 @@ import com.example.familybudget.dto.NewPasswordRequest;
 import com.example.familybudget.dto.ResponseResetPassword;
 import com.example.familybudget.entity.*;
 import com.example.familybudget.exception.ForbiddenException;
+import com.example.familybudget.repository.AccountRepository;
 import com.example.familybudget.repository.CategoryExpenseRepository;
 import com.example.familybudget.repository.CategoryIncomeRepository;
 import com.example.familybudget.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +26,8 @@ import java.util.UUID;
 @Slf4j
 public class UserService {
 
+
+    private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailProvider emailProvider;
@@ -97,6 +101,15 @@ public class UserService {
         log.debug("Added new income categories for user: {}", user);
         categoryExpenseRepository.saveAll(listExpense);
         log.debug("Added new expense categories for user: {}", user);
+        Account account = new Account();
+        account.setAmount(0.0);
+        account.setStartAmount(0.0);
+        account.setCurrency(user.getCurrency());
+        account.setUser(user);
+        account.setName("Наличные");
+        account.setCreatedOn(LocalDateTime.now());
+        accountRepository.save(account);
+        log.debug("Added new account {} for user: {}", account, user);
     }
 
     public void requestResetPassword(String email) {

@@ -20,7 +20,8 @@ public interface AccountMapper {
     @Mapping(source = "createdOn", target = "createdOn")
     AccountDto toAccountDto(Account account);
 
-    @Mapping(source = "accountDto.amount", target = "amount")
+    @Mapping(source = "accountDto.startAmount", target = "startAmount")
+    @Mapping(source = "accountDto.startAmount", target = "amount")
     @Mapping(source = "accountDto.name", target = "name")
     @Mapping(source = "accountDto.currency", target = "currency")
     @Mapping(source = "user", target = "user")

@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 public class Account extends BaseEntity {
     @Column(name = "name")
     private String name;
+    @Column(name = "start_amount")
+    private Double startAmount;
     @Column(name = "amount")
     private Double amount;
     @Enumerated(EnumType.STRING)

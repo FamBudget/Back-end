@@ -3,6 +3,7 @@ package com.example.familybudget.controller;
 import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.AccountDto;
 import com.example.familybudget.dto.NewAccountDto;
+import com.example.familybudget.dto.UpdateAccount;
 import com.example.familybudget.service.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +81,7 @@ public class AccountController {
     public ResponseEntity<AccountDto> updateAccount(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestParam @NotBlank @Email String email,
-            @RequestBody @Valid AccountDto updateAccountDto) {
+            @RequestBody @Valid UpdateAccount updateAccountDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
         AccountDto accountDto = accountService.updateAccount(updateAccountDto, email);

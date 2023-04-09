@@ -103,11 +103,6 @@
                   "type": "array",
                   "items": {
                     "title": "AccountDto",
-                    "required": [
-                      "amount",
-                      "id",
-                      "name"
-                    ],
                     "type": "object",
                     "properties": {
                       "amount": {
@@ -177,24 +172,15 @@
           "content": {
             "application/json": {
               "schema": {
-                "title": "AccountDto",
+                "title": "UpdateAccount",
                 "required": [
-                  "amount",
-                  "id",
-                  "name"
+                  "id"
                 ],
                 "type": "object",
                 "properties": {
-                  "amount": {
-                    "type": "number",
-                    "format": "double"
-                  },
                   "createdOn": {
                     "type": "string",
                     "example": "yyyy-MM-dd HH:mm:ss"
-                  },
-                  "currency": {
-                    "type": "string"
                   },
                   "id": {
                     "type": "integer",
@@ -202,6 +188,10 @@
                   },
                   "name": {
                     "type": "string"
+                  },
+                  "startAmount": {
+                    "type": "number",
+                    "format": "double"
                   }
                 }
               }
@@ -215,11 +205,6 @@
               "*/*": {
                 "schema": {
                   "title": "AccountDto",
-                  "required": [
-                    "amount",
-                    "id",
-                    "name"
-                  ],
                   "type": "object",
                   "properties": {
                     "amount": {
@@ -293,15 +278,11 @@
               "schema": {
                 "title": "NewAccountDto",
                 "required": [
-                  "amount",
-                  "name"
+                  "name",
+                  "startAmount"
                 ],
                 "type": "object",
                 "properties": {
-                  "amount": {
-                    "type": "number",
-                    "format": "double"
-                  },
                   "createdOn": {
                     "type": "string",
                     "example": "yyyy-MM-dd HH:mm:ss"
@@ -311,6 +292,10 @@
                   },
                   "name": {
                     "type": "string"
+                  },
+                  "startAmount": {
+                    "type": "number",
+                    "format": "double"
                   }
                 }
               }
@@ -324,11 +309,6 @@
               "*/*": {
                 "schema": {
                   "title": "AccountDto",
-                  "required": [
-                    "amount",
-                    "id",
-                    "name"
-                  ],
                   "type": "object",
                   "properties": {
                     "amount": {
@@ -415,11 +395,6 @@
               "*/*": {
                 "schema": {
                   "title": "AccountDto",
-                  "required": [
-                    "amount",
-                    "id",
-                    "name"
-                  ],
                   "type": "object",
                   "properties": {
                     "amount": {
@@ -899,12 +874,12 @@
       }
     },
     "/reset-password": {
-      "get": {
+      "post": {
         "tags": [
           "auth-controller"
         ],
         "summary": "Repair password send link",
-        "operationId": "requestResetPasswordUsingGET",
+        "operationId": "requestResetPasswordUsingPOST",
         "parameters": [
           {
             "name": "email",
@@ -928,6 +903,9 @@
               }
             }
           },
+          "201": {
+            "description": "Created"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -941,12 +919,12 @@
       }
     },
     "/reset-password/{code}": {
-      "post": {
+      "get": {
         "tags": [
           "auth-controller"
         ],
         "summary": "verify code",
-        "operationId": "verifyCodeUsingPOST",
+        "operationId": "verifyCodeUsingGET",
         "parameters": [
           {
             "name": "email",
@@ -989,9 +967,6 @@
                 }
               }
             }
-          },
-          "201": {
-            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -2851,11 +2826,6 @@
     "schemas": {
       "AccountDto": {
         "title": "AccountDto",
-        "required": [
-          "amount",
-          "id",
-          "name"
-        ],
         "type": "object",
         "properties": {
           "amount": {
@@ -2952,15 +2922,11 @@
       "NewAccountDto": {
         "title": "NewAccountDto",
         "required": [
-          "amount",
-          "name"
+          "name",
+          "startAmount"
         ],
         "type": "object",
         "properties": {
-          "amount": {
-            "type": "number",
-            "format": "double"
-          },
           "createdOn": {
             "type": "string",
             "example": "yyyy-MM-dd HH:mm:ss"
@@ -2970,6 +2936,10 @@
           },
           "name": {
             "type": "string"
+          },
+          "startAmount": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -3157,6 +3127,30 @@
           }
         },
         "description": "Request for new password"
+      },
+      "UpdateAccount": {
+        "title": "UpdateAccount",
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "createdOn": {
+            "type": "string",
+            "example": "yyyy-MM-dd HH:mm:ss"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "startAmount": {
+            "type": "number",
+            "format": "double"
+          }
+        }
       },
       "UserDto": {
         "title": "UserDto",

@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS operations_income (
     amount DOUBLE PRECISION NOT NULL,
     description VARCHAR(500) NOT NULL,
     category_id BIGINT REFERENCES categories_income(id) NOT NULL,
-    account_id BIGINT REFERENCES accounts(id) NOT NULL,
+    account_id BIGINT REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,
     created_on TIMESTAMP WITHOUT TIME ZONE,
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL
 );
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS operations_expense (
     amount DOUBLE PRECISION NOT NULL,
     description VARCHAR(500) NOT NULL,
     category_id BIGINT REFERENCES categories_expense(id) NOT NULL,
-    account_id BIGINT REFERENCES accounts(id) NOT NULL,
+    account_id BIGINT REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,
     created_on TIMESTAMP WITHOUT TIME ZONE,
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL
 );

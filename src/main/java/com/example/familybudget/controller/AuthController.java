@@ -87,14 +87,14 @@ public class AuthController {
     }
 
     @ApiOperation(value = "Repair password send link")
-    @GetMapping("/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity<?>  requestResetPassword(@NotBlank @Email @RequestParam String email) {
         userService.requestResetPassword(email);
         return ResponseEntity.ok().build();
     }
 
     @ApiOperation(value = "verify code")
-    @PostMapping("/reset-password/{code}")
+    @GetMapping("/reset-password/{code}")
     public ResponseEntity<ResponseResetPassword> verifyCode(@NotBlank @Email @RequestParam String email,
                                                             @PathVariable @NotBlank String code) {
         ResponseResetPassword resetPassword = userService.verifyCode(email, code);

@@ -70,16 +70,24 @@ public class AccountService {
         if (!email.equals(account.getUser().getEmail())) {
             throw new ForbiddenException("This user can't update this account");
         }
-        account.setName(updateAccount.getName());
-        double oldStartAmount = account.getStartAmount();
-        double newStartAmount = updateAccount.getStartAmount();
-        double newAmount = account.getAmount() - oldStartAmount + newStartAmount;
-        if (newAmount < 0.0) {
-            throw new ForbiddenException("The total invoice amount is negative");
+
+        if (updateAccount.getStartAmount() != null) {
+            double oldStartAmount = account.getStartAmount();
+            double newStartAmount = updateAccount.getStartAmount();
+            double newAmount = account.getAmount() - oldStartAmount + newStartAmount;
+            if (newAmount < 0.0) {
+                throw new ForbiddenException("The total invoice amount is negative");
+            }
+            account.setStartAmount(newStartAmount);
+            account.setAmount(newAmount);
         }
-        account.setStartAmount(newStartAmount);
-        account.setAmount(newAmount);
-        account.setCreatedOn(updateAccount.getCreatedOn());
+
+        if (updateAccount.getCreatedOn() != null) {
+            account.setCreatedOn(updateAccount.getCreatedOn());
+        }
+        if (updateAccount.getName() != null) {
+            account.setName(updateAccount.getName());
+        }
         AccountDto accountDto = AccountMapper.INSTANCE.toAccountDto(accountRepository.save(account));
         log.debug("Account: {} was updated", account.getId());
         return accountDto;

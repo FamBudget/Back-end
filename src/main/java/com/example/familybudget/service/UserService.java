@@ -121,7 +121,7 @@ public class UserService {
         String message = String.format(
                 "Hello, %s! \n" +
                         "Follow the link to reset your password. If you did not make this request, then simply ignore this letter: %s/%s",
-                user.getEmail(), resetPasswordLink, user.getActivationCode());
+                email, resetPasswordLink, user.getActivationCode() + "?email=" + email);
         emailProvider.send(user.getEmail(), "repair password", message);
         log.debug("sending new password typing link");
     }

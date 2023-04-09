@@ -686,6 +686,98 @@
         }
       }
     },
+    "/change-password/{code}": {
+      "put": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Change password",
+        "operationId": "changePasswordUsingPUT",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "in": "path",
+            "description": "code",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "NewPasswordRequest",
+                "required": [
+                  "confirmPassword",
+                  "password"
+                ],
+                "type": "object",
+                "properties": {
+                  "confirmPassword": {
+                    "type": "string",
+                    "description": "confirmPassword",
+                    "example": "12qwaszx!@QWASZX"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password",
+                    "example": "12qwaszx!@QWASZX"
+                  }
+                },
+                "description": "Request for new password"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "ResponseResetPassword",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Request for new password"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/registration": {
       "post": {
         "tags": [
@@ -787,6 +879,113 @@
                     }
                   },
                   "description": "Short information about requested user"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "get": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Repair password send link",
+        "operationId": "requestResetPasswordUsingGET",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/reset-password/{code}": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "verify code",
+        "operationId": "verifyCodeUsingPOST",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "in": "path",
+            "description": "code",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "ResponseResetPassword",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Request for new password"
                 }
               }
             }
@@ -1990,6 +2189,124 @@
         }
       }
     },
+    "/operations/expense/{operationId}": {
+      "get": {
+        "tags": [
+          "operation-controller"
+        ],
+        "summary": "getOperationExpenseById",
+        "operationId": "getOperationExpenseByIdUsingGET",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operationId",
+            "in": "path",
+            "description": "operationId",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "ResponseOperation",
+                  "type": "object",
+                  "properties": {
+                    "account": {
+                      "title": "AccountDtoShort",
+                      "type": "object",
+                      "properties": {
+                        "currency": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "category": {
+                      "title": "CategoryDto",
+                      "required": [
+                        "id",
+                        "name"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Category id",
+                          "format": "int64",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Category name",
+                          "example": "Category1"
+                        }
+                      },
+                      "description": "Short information about category"
+                    },
+                    "createdOn": {
+                      "type": "string",
+                      "example": "yyyy-MM-dd HH:mm:ss"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/operations/income": {
       "get": {
         "tags": [
@@ -2312,6 +2629,124 @@
         }
       }
     },
+    "/operations/income/{operationId}": {
+      "get": {
+        "tags": [
+          "operation-controller"
+        ],
+        "summary": "getOperationIncomeById",
+        "operationId": "getOperationIncomeByIdUsingGET",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operationId",
+            "in": "path",
+            "description": "operationId",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "ResponseOperation",
+                  "type": "object",
+                  "properties": {
+                    "account": {
+                      "title": "AccountDtoShort",
+                      "type": "object",
+                      "properties": {
+                        "currency": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "category": {
+                      "title": "CategoryDto",
+                      "required": [
+                        "id",
+                        "name"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Category id",
+                          "format": "int64",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Category name",
+                          "example": "Category1"
+                        }
+                      },
+                      "description": "Short information about category"
+                    },
+                    "createdOn": {
+                      "type": "string",
+                      "example": "yyyy-MM-dd HH:mm:ss"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/users/{userId}": {
       "get": {
         "tags": [
@@ -2553,6 +2988,27 @@
         },
         "description": "New category"
       },
+      "NewPasswordRequest": {
+        "title": "NewPasswordRequest",
+        "required": [
+          "confirmPassword",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "confirmPassword": {
+            "type": "string",
+            "description": "confirmPassword",
+            "example": "12qwaszx!@QWASZX"
+          },
+          "password": {
+            "type": "string",
+            "description": "password",
+            "example": "12qwaszx!@QWASZX"
+          }
+        },
+        "description": "Request for new password"
+      },
       "OperationDto": {
         "title": "OperationDto",
         "required": [
@@ -2688,6 +3144,19 @@
             "format": "int64"
           }
         }
+      },
+      "ResponseResetPassword": {
+        "title": "ResponseResetPassword",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "description": "Request for new password"
       },
       "UserDto": {
         "title": "UserDto",

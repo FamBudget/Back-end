@@ -10,16 +10,15 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 @Data
-public class OperationDto {
-    private Long id;
+public class OperationMovingDto {
     @NotNull
     @Positive
     private Double amount;
     private String description;
     @NotNull
-    private Long categoryId;
+    private Long accountFromId;
     @NotNull
-    private Long accountId;
+    private Long accountToId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
     @PastOrPresent

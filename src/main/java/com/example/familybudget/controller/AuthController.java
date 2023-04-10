@@ -86,14 +86,14 @@ public class AuthController {
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Repair password send link")
+    @ApiOperation(value = "Repair password send link", notes = "First step of password recovery. Send link to email")
     @PostMapping("/reset-password")
     public ResponseEntity<?>  requestResetPassword(@NotBlank @Email @RequestParam String email) {
         userService.requestResetPassword(email);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "verify code")
+    @ApiOperation(value = "verify code", notes = "Second step of password recovery. Follow to link")
     @GetMapping("/reset-password/{code}")
     public ResponseEntity<ResponseResetPassword> verifyCode(@NotBlank @Email @RequestParam String email,
                                                             @PathVariable @NotBlank String code) {
@@ -101,7 +101,7 @@ public class AuthController {
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Change password")
+    @ApiOperation(value = "Change password", notes = "Third step of password recovery. Input new password")
     @PutMapping("/change-password/{code}")
     public ResponseEntity<ResponseResetPassword>  changePassword(@NotBlank @Email @RequestParam String email,
                                                                  @PathVariable @NotBlank String code,

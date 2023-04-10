@@ -1,10 +1,13 @@
 package com.example.familybudget.service;
 
 import com.example.familybudget.dto.OperationDto;
+import com.example.familybudget.dto.OperationMovingDto;
 import com.example.familybudget.dto.ResponseOperation;
+import com.example.familybudget.dto.ResponseOperationMoving;
 import com.example.familybudget.entity.*;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.mapper.OperationMapper;
+import com.example.familybudget.mapper.OperationMovingMapper;
 import com.example.familybudget.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,7 @@ public class OperationService {
 
     private final OperationExpenseRepository operationExpenseRepository;
     private final OperationIncomeRepository operationIncomeRepository;
+    private final OperationMovingRepository operationMovingRepository;
     private final AccountRepository accountRepository;
     private final CategoryIncomeRepository categoryIncomeRepository;
     private final CategoryExpenseRepository categoryExpenseRepository;
@@ -177,6 +181,46 @@ public class OperationService {
 
         log.debug("Added new operation of income: {} by user: {}", operationIncome, user);
         return OperationMapper.INSTANCE.toOperationDto(operationSaved);
+    }
+
+    @Transactional
+    public ResponseOperationMoving addOperationMoving(OperationMovingDto newOperationDto, String email) {
+        User user = findUserByEmail(email);
+
+        Account accountFrom = accountRepository.getById(newOperationDto.getAccountFromId());
+        String emailAccountFrom = accountFrom.getUser().getEmail();
+        if (!email.equals(emailAccountFrom)) {
+            throw new ForbiddenException("This account does not apply to this user");
+        }
+
+        Account accountTo = accountRepository.getById(newOperationDto.getAccountToId());
+        String emailAccountTo = accountTo.getUser().getEmail();
+        if (!email.equals(emailAccountTo)) {
+            throw new ForbiddenException("This account does not apply to this user");
+        }
+
+        double newAmount = accountFrom.getAmount() - newOperationDto.getAmount();
+        if (newAmount < 0) {
+            throw new ForbiddenException("Not enough money in this account");
+        }
+
+        accountFrom.setAmount(newAmount);
+        accountRepository.save(accountFrom);
+
+        newAmount = accountTo.getAmount() + newOperationDto.getAmount();
+
+        accountTo.setAmount(newAmount);
+        accountRepository.save(accountTo);
+
+        OperationMoving operationMoving = OperationMovingMapper.INSTANCE
+                .toOperation(newOperationDto, accountFrom, accountTo, user);
+        if (operationMoving.getCreatedOn() == null) {
+            operationMoving.setCreatedOn(LocalDateTime.now());
+        }
+        OperationMoving operationSaved = operationMovingRepository.save(operationMoving);
+
+        log.debug("Added new operation of moving: {} by user: {}", operationMoving, user);
+        return OperationMovingMapper.INSTANCE.toOperationDto(operationSaved);
     }
 
     private User findUserByEmail(String email) {

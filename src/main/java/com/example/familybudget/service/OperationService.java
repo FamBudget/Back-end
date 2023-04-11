@@ -1,10 +1,13 @@
 package com.example.familybudget.service;
 
 import com.example.familybudget.dto.OperationDto;
+import com.example.familybudget.dto.OperationMovingDto;
 import com.example.familybudget.dto.ResponseOperation;
+import com.example.familybudget.dto.ResponseOperationMoving;
 import com.example.familybudget.entity.*;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.mapper.OperationMapper;
+import com.example.familybudget.mapper.OperationMovingMapper;
 import com.example.familybudget.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,7 @@ public class OperationService {
 
     private final OperationExpenseRepository operationExpenseRepository;
     private final OperationIncomeRepository operationIncomeRepository;
+    private final OperationMovingRepository operationMovingRepository;
     private final AccountRepository accountRepository;
     private final CategoryIncomeRepository categoryIncomeRepository;
     private final CategoryExpenseRepository categoryExpenseRepository;
@@ -93,6 +97,73 @@ public class OperationService {
         return operationsDto;
     }
 
+    public List<ResponseOperationMoving> getOperationsMoving(String email,
+                                                       LocalDateTime startDate,
+                                                       LocalDateTime endDate,
+                                                       SortParameter sort,
+                                                       boolean sortDesc,
+                                                       int from,
+                                                       int size) {
+        User user = findUserByEmail(email);
+
+        String sortParameter = "";
+        if (sort == SortParameter.DATE) {
+            sortParameter = "createdOn";
+        } else if (sort == SortParameter.AMOUNT) {
+            sortParameter = "amount";
+        } else if (sort == SortParameter.ACCOUNT_FROM) {
+            sortParameter = "accountFrom.name";
+        } else if (sort == SortParameter.ACCOUNT_TO) {
+            sortParameter = "accountTo.name";
+        }
+        Pageable page = PageRequest.of(from / size, size,
+                sortDesc ? Sort.by(sortParameter).descending() :  Sort.by(sortParameter).ascending());
+
+        LocalDateTime start = startDate == null ? LocalDateTime.now().minusYears(999) : startDate;
+        LocalDateTime end = endDate == null ? LocalDateTime.now() : endDate;
+        List<ResponseOperationMoving> operationsDto = operationMovingRepository
+                .getAllByUserAndCreatedOn_MinAndCreatedOn_Max(user, start, end, page)
+                .stream().map(OperationMovingMapper.INSTANCE::toOperationDto).collect(Collectors.toList());
+        log.debug("Got operations expense by user: {}. Operations counts: {}", user, operationsDto.size());
+        return operationsDto;
+    }
+
+    public ResponseOperation getOperationExpenseById(long id, String email) {
+        findUserByEmail(email);
+        OperationExpense operation = operationExpenseRepository.getById(id);
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this operation");
+        }
+        ResponseOperation operationDto = OperationMapper.INSTANCE.toOperationDto(operation);
+
+        log.debug("Got operation income {} by id", operation);
+        return operationDto;
+    }
+
+    public ResponseOperation getOperationIncomeById(long id, String email) {
+        findUserByEmail(email);
+        OperationIncome operation = operationIncomeRepository.getById(id);
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this operation");
+        }
+        ResponseOperation operationDto = OperationMapper.INSTANCE.toOperationDto(operation);
+
+        log.debug("Got operation income {} by id", operation);
+        return operationDto;
+    }
+
+    public ResponseOperationMoving getOperationMovingById(long id, String email) {
+        findUserByEmail(email);
+        OperationMoving operation = operationMovingRepository.getById(id);
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't get this operation");
+        }
+        ResponseOperationMoving operationDto = OperationMovingMapper.INSTANCE.toOperationDto(operation);
+
+        log.debug("Got operation moving {} by id", operation);
+        return operationDto;
+    }
+
     @Transactional
     public ResponseOperation addOperationExpense(OperationDto newOperationDto, String email) {
         User user = findUserByEmail(email);
@@ -125,30 +196,6 @@ public class OperationService {
         return OperationMapper.INSTANCE.toOperationDto(operationSaved);
     }
 
-    public ResponseOperation getOperationExpenseById(long id, String email) {
-        findUserByEmail(email);
-        OperationExpense operation = operationExpenseRepository.getById(id);
-        if (!email.equals(operation.getUser().getEmail())) {
-            throw new ForbiddenException("This user can't get this operation");
-        }
-        ResponseOperation operationDto = OperationMapper.INSTANCE.toOperationDto(operation);
-
-        log.debug("Got operation income {} by id", operation);
-        return operationDto;
-    }
-
-    public ResponseOperation getOperationIncomeById(long id, String email) {
-        findUserByEmail(email);
-        OperationIncome operation = operationIncomeRepository.getById(id);
-        if (!email.equals(operation.getUser().getEmail())) {
-            throw new ForbiddenException("This user can't get this operation");
-        }
-        ResponseOperation operationDto = OperationMapper.INSTANCE.toOperationDto(operation);
-
-        log.debug("Got operation income {} by id", operation);
-        return operationDto;
-    }
-
     @Transactional
     public ResponseOperation addOperationIncome(OperationDto newOperationDto, String email) {
         User user = findUserByEmail(email);
@@ -177,6 +224,46 @@ public class OperationService {
 
         log.debug("Added new operation of income: {} by user: {}", operationIncome, user);
         return OperationMapper.INSTANCE.toOperationDto(operationSaved);
+    }
+
+    @Transactional
+    public ResponseOperationMoving addOperationMoving(OperationMovingDto newOperationDto, String email) {
+        User user = findUserByEmail(email);
+
+        Account accountFrom = accountRepository.getById(newOperationDto.getAccountFromId());
+        String emailAccountFrom = accountFrom.getUser().getEmail();
+        if (!email.equals(emailAccountFrom)) {
+            throw new ForbiddenException("This account does not apply to this user");
+        }
+
+        Account accountTo = accountRepository.getById(newOperationDto.getAccountToId());
+        String emailAccountTo = accountTo.getUser().getEmail();
+        if (!email.equals(emailAccountTo)) {
+            throw new ForbiddenException("This account does not apply to this user");
+        }
+
+        double newAmount = accountFrom.getAmount() - newOperationDto.getAmount();
+        if (newAmount < 0) {
+            throw new ForbiddenException("Not enough money in this account");
+        }
+
+        accountFrom.setAmount(newAmount);
+        accountRepository.save(accountFrom);
+
+        newAmount = accountTo.getAmount() + newOperationDto.getAmount();
+
+        accountTo.setAmount(newAmount);
+        accountRepository.save(accountTo);
+
+        OperationMoving operationMoving = OperationMovingMapper.INSTANCE
+                .toOperation(newOperationDto, accountFrom, accountTo, user);
+        if (operationMoving.getCreatedOn() == null) {
+            operationMoving.setCreatedOn(LocalDateTime.now());
+        }
+        OperationMoving operationSaved = operationMovingRepository.save(operationMoving);
+
+        log.debug("Added new operation of moving: {} by user: {}", operationMoving, user);
+        return OperationMovingMapper.INSTANCE.toOperationDto(operationSaved);
     }
 
     private User findUserByEmail(String email) {

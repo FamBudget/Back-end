@@ -4,8 +4,8 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Request for new password")
-public class ResponseResetPassword {
+@ApiModel(description = "Response to security operations with a user")
+public class ResponseUserSecurityStatus {
     String status;
     String email;
 }

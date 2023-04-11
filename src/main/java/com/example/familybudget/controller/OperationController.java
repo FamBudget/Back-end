@@ -2,7 +2,9 @@ package com.example.familybudget.controller;
 
 import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.OperationDto;
+import com.example.familybudget.dto.OperationMovingDto;
 import com.example.familybudget.dto.ResponseOperation;
+import com.example.familybudget.dto.ResponseOperationMoving;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.service.OperationService;
 import com.example.familybudget.service.SortParameter;
@@ -88,6 +90,34 @@ public class OperationController {
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get moving operations by user email")
+    @GetMapping("/moving")
+    public ResponseEntity<List<ResponseOperationMoving>> getOperationsMoving(
+            @RequestHeader(AUTHORIZATION) String token,
+            @NotBlank @Email @RequestParam String email,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
+            @RequestParam(required = false) LocalDateTime startDate,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
+            @RequestParam(required = false) LocalDateTime endDate,
+            @RequestParam(required = false, defaultValue = "DATE") String sort,
+            @RequestParam(required = false, defaultValue = "true") Boolean sortDesc,
+            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+            @Positive @RequestParam(defaultValue = "10") Integer size) {
+
+        SortParameter sortParameter;
+
+        try {
+            sortParameter =  SortParameter.valueOf(sort);
+        } catch (IllegalArgumentException e) {
+            throw new ForbiddenException("Unknown sort: " + sort);
+        }
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        List<ResponseOperationMoving> operationsDto = operationService
+                .getOperationsMoving(email, startDate, endDate, sortParameter, sortDesc, from, size);
+        return new ResponseEntity<>(operationsDto, HttpStatus.OK);
+    }
+
     @GetMapping("/expense/{operationId}")
     public ResponseEntity<ResponseOperation>  getOperationExpenseById(@RequestHeader(AUTHORIZATION) String token,
                                                                       @NotBlank @Email @RequestParam String email,
@@ -105,6 +135,16 @@ public class OperationController {
 
         controllerUtil.validateTokenAndEmail(email, token);
         ResponseOperation operationDto = operationService.getOperationIncomeById(operationId, email);
+        return new ResponseEntity<>(operationDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/moving/{operationId}")
+    public ResponseEntity<ResponseOperationMoving>  getOperationMovingById(@RequestHeader(AUTHORIZATION) String token,
+                                                                     @NotBlank @Email @RequestParam String email,
+                                                                     @PathVariable long operationId) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        ResponseOperationMoving operationDto = operationService.getOperationMovingById(operationId, email);
         return new ResponseEntity<>(operationDto, HttpStatus.OK);
     }
 
@@ -130,6 +170,19 @@ public class OperationController {
 
         controllerUtil.validateTokenAndEmail(email, token);
         ResponseOperation operationDto = operationService.addOperationExpense(newOperation, email);
+
+        return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Create a new operation of moving")
+    @PostMapping("/moving")
+    ResponseEntity<ResponseOperationMoving> addOperationMoving(
+            @RequestBody @Valid OperationMovingDto newOperation,
+            @NotBlank @RequestParam @Email String email,
+            @RequestHeader(AUTHORIZATION) String token) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        ResponseOperationMoving operationDto = operationService.addOperationMoving(newOperation, email);
 
         return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
     }

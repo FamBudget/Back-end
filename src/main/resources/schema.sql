@@ -59,25 +59,25 @@ CREATE TABLE IF NOT EXISTS operations_expense (
 CREATE TABLE IF NOT EXISTS plans_income (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     category_id BIGINT REFERENCES categories_income(id) NOT NULL,
-    year INT NOT NULL,
-    month INT NOT NULL,
+    date TIMESTAMP WITHOUT TIME ZONE,
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    CONSTRAINT unique_plan_income UNIQUE (category_id, year, month, user_id)
+    CONSTRAINT unique_plan_income UNIQUE (category_id, date, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS plans_expense (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     category_id BIGINT REFERENCES categories_expense(id) NOT NULL,
-    year INT NOT NULL,
-    month INT NOT NULL,
+    date TIMESTAMP WITHOUT TIME ZONE,
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    CONSTRAINT unique_plan_expense UNIQUE (category_id, year, month, user_id)
+    CONSTRAINT unique_plan_expense UNIQUE (category_id, date, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS accounts_move (
+CREATE TABLE IF NOT EXISTS operations_move (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     account_from_id BIGINT REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,
     account_to_id BIGINT REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,
     amount DOUBLE PRECISION NOT NULL,
-    moved_date TIMESTAMP WITHOUT TIME ZONE
+    description VARCHAR(500) NOT NULL,
+    created_on TIMESTAMP WITHOUT TIME ZONE,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL
 );

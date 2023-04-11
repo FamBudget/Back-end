@@ -1,7 +1,7 @@
 package com.example.familybudget.service;
 
 import com.example.familybudget.dto.NewPasswordRequest;
-import com.example.familybudget.dto.ResponseResetPassword;
+import com.example.familybudget.dto.ResponseUserSecurityStatus;
 import com.example.familybudget.entity.*;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.repository.AccountRepository;
@@ -11,11 +11,12 @@ import com.example.familybudget.repository.UserRepository;
 import com.example.familybudget.service.util.EmailProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +37,6 @@ public class UserService {
     private final List<String> categoryIncomeList = List.of("Category1", "Category2", "Category3");
     private final List<String> categoryExpenseList = List.of("Category1", "Category2", "Category3");
 
-    @Value("${link.to.email}")
-    private String activationLink;
-    @Value("${link.reset.password}")
-    private String resetPasswordLink;
-
     public void registerUser(User user) {
 
         user.setRole(Role.USER);
@@ -48,21 +44,16 @@ public class UserService {
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+
+        String serverIP = getIp();
+
+        String activationLink = "http://" + serverIP + ":8080/activate/" + user.getActivationCode();
+
         String message = String.format(
                 "Hello, %s! \n" +
-                        "Welcome to Family Budget. Please, visit next link: %s/%s",
-                user.getEmail(), activationLink, user.getActivationCode());
+                        "Welcome to Family Budget. Please, visit next link: %s",
+                user.getEmail(), activationLink);
         emailProvider.send(user.getEmail(), "Activation Code", message);
-    }
-
-    private User findByEmail(String email) {
-        User user = userRepository.findUserByEmail(email);
-        log.debug("finding user by email: {}", email);
-        if (user == null) {
-            throw new EntityNotFoundException("User named " + email + " not found");
-        }
-        log.debug("user found");
-        return user;
     }
 
     public User findByEmailAndPassword(String email, String password) {
@@ -76,7 +67,7 @@ public class UserService {
         }
     }
 
-    public void activateUser(String code) {
+    public ResponseUserSecurityStatus activateUser(String code) {
         User user = userRepository.findByActivationCode(code);
         if (user == null) {
             throw new EntityNotFoundException("Activation code not found");
@@ -110,6 +101,10 @@ public class UserService {
         account.setCreatedOn(LocalDateTime.now());
         accountRepository.save(account);
         log.debug("Added new account {} for user: {}", account, user);
+        ResponseUserSecurityStatus result = new ResponseUserSecurityStatus();
+        result.setEmail(user.getEmail());
+        result.setStatus("User activated");
+        return result;
     }
 
     public void requestResetPassword(String email) {
@@ -118,6 +113,11 @@ public class UserService {
 
         user.setActivationCode(UUID.randomUUID().toString());
         userRepository.save(user);
+
+        String serverIP = getIp();
+
+        String resetPasswordLink = "http://" + serverIP + ":8080/reset-password";
+
         String message = String.format(
                 "Hello, %s! \n" +
                         "Follow the link to reset your password. If you did not make this request, then simply ignore this letter: %s/%s",
@@ -126,7 +126,7 @@ public class UserService {
         log.debug("sending new password typing link");
     }
 
-    public ResponseResetPassword verifyCode(String email, String code) {
+    public ResponseUserSecurityStatus verifyCode(String email, String code) {
         User user = userRepository.findByActivationCode(code);
         if (user == null) {
             throw new EntityNotFoundException("Activation code not found");
@@ -136,15 +136,15 @@ public class UserService {
             throw new ForbiddenException("This code does not apply to this user");
         }
 
-        ResponseResetPassword responseResetPassword = new ResponseResetPassword();
-        responseResetPassword.setStatus("success");
-        responseResetPassword.setEmail(user.getEmail());
+        ResponseUserSecurityStatus responseUserSecurityStatus = new ResponseUserSecurityStatus();
+        responseUserSecurityStatus.setStatus("success");
+        responseUserSecurityStatus.setEmail(user.getEmail());
 
         log.debug("starting the user password reset process {}: ", user.getEmail());
-        return responseResetPassword;
+        return responseUserSecurityStatus;
     }
 
-    public ResponseResetPassword changePassword(String email, String code, NewPasswordRequest passwordRequest) {
+    public ResponseUserSecurityStatus changePassword(String email, String code, NewPasswordRequest passwordRequest) {
         User user = userRepository.findByActivationCode(code);
         if (user == null) {
             throw new EntityNotFoundException("Activation code not found");
@@ -157,11 +157,31 @@ public class UserService {
         user.setActivationCode(null);
         userRepository.save(user);
 
-        ResponseResetPassword responseResetPassword = new ResponseResetPassword();
-        responseResetPassword.setStatus("success");
-        responseResetPassword.setEmail(user.getEmail());
+        ResponseUserSecurityStatus responseUserSecurityStatus = new ResponseUserSecurityStatus();
+        responseUserSecurityStatus.setStatus("success");
+        responseUserSecurityStatus.setEmail(user.getEmail());
 
         log.debug("User password was was changed: ");
-        return responseResetPassword;
+        return responseUserSecurityStatus;
+    }
+
+    private String getIp() {
+        String serverIP;
+        try {
+            serverIP = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            serverIP = "localhost";
+        }
+        return serverIP;
+    }
+
+    private User findByEmail(String email) {
+        User user = userRepository.findUserByEmail(email);
+        log.debug("finding user by email: {}", email);
+        if (user == null) {
+            throw new EntityNotFoundException("User named " + email + " not found");
+        }
+        log.debug("user found");
+        return user;
     }
 }

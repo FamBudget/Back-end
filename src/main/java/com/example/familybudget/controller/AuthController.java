@@ -2,6 +2,7 @@ package com.example.familybudget.controller;
 
 import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.*;
+import com.example.familybudget.dto.ResponseUserSecurityStatus;
 import com.example.familybudget.entity.Currency;
 import com.example.familybudget.entity.Status;
 import com.example.familybudget.entity.User;
@@ -70,43 +71,48 @@ public class AuthController {
 
     @ApiOperation(value = "Activation registered user", notes = "Returns a result about the activation status")
     @GetMapping("/activate/{code}")
-    public ResponseEntity<String> activate(@PathVariable @NotBlank String code) {
+    public ResponseEntity<ResponseUserSecurityStatus> activate(@PathVariable @NotBlank String code) {
 
-        userService.activateUser(code);
-            return new ResponseEntity<>("User activated", HttpStatus.OK);
+        ResponseUserSecurityStatus result = userService.activateUser(code);
+
+            return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Logout user", notes = "Returns the token success lock result")
     @PostMapping("/auth/logout")
-    public ResponseEntity<String>  logout(@RequestHeader(AUTHORIZATION) String token,
-                                          @NotBlank @Email @RequestParam String email) {
+    public ResponseEntity<ResponseUserSecurityStatus>  logout(@RequestHeader(AUTHORIZATION) String token,
+                                                              @NotBlank @Email @RequestParam String email) {
 
         controllerUtil.validateTokenAndEmail(email, token);
         jwtProvider.blacklistToken(token.substring(7));
-        return new ResponseEntity<>("Success", HttpStatus.OK);
+
+        ResponseUserSecurityStatus result = new ResponseUserSecurityStatus();
+        result.setEmail(email);
+        result.setStatus("Logout success");
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Repair password send link")
+    @ApiOperation(value = "Repair password send link", notes = "First step of password recovery. Send link to email")
     @PostMapping("/reset-password")
     public ResponseEntity<?>  requestResetPassword(@NotBlank @Email @RequestParam String email) {
         userService.requestResetPassword(email);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "verify code")
+    @ApiOperation(value = "verify code", notes = "Second step of password recovery. Follow to link")
     @GetMapping("/reset-password/{code}")
-    public ResponseEntity<ResponseResetPassword> verifyCode(@NotBlank @Email @RequestParam String email,
-                                                            @PathVariable @NotBlank String code) {
-        ResponseResetPassword resetPassword = userService.verifyCode(email, code);
+    public ResponseEntity<ResponseUserSecurityStatus> verifyCode(@NotBlank @Email @RequestParam String email,
+                                                                 @PathVariable @NotBlank String code) {
+        ResponseUserSecurityStatus resetPassword = userService.verifyCode(email, code);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Change password")
+    @ApiOperation(value = "Change password", notes = "Third step of password recovery. Input new password")
     @PutMapping("/change-password/{code}")
-    public ResponseEntity<ResponseResetPassword>  changePassword(@NotBlank @Email @RequestParam String email,
-                                                                 @PathVariable @NotBlank String code,
-                                                                 @RequestBody @Valid NewPasswordRequest newPasswordRequest) {
-        ResponseResetPassword resetPassword = userService.changePassword(email, code, newPasswordRequest);
+    public ResponseEntity<ResponseUserSecurityStatus>  changePassword(@NotBlank @Email @RequestParam String email,
+                                                                      @PathVariable @NotBlank String code,
+                                                                      @RequestBody @Valid NewPasswordRequest newPasswordRequest) {
+        ResponseUserSecurityStatus resetPassword = userService.changePassword(email, code, newPasswordRequest);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 }

@@ -20,7 +20,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         ApiResponse response = new ApiResponse();
         response.setStatus(401);
-        response.setMessage("User don't unauthorised");
+        response.setMessage("User not authorized");
         OutputStream out = httpServletResponse.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(out, response);

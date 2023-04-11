@@ -519,7 +519,17 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "string"
+                  "title": "ResponseUserSecurityStatus",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Response to security operations with a user"
                 }
               }
             }
@@ -571,7 +581,17 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "string"
+                  "title": "ResponseUserSecurityStatus",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Response to security operations with a user"
                 }
               }
             }
@@ -667,6 +687,7 @@
           "auth-controller"
         ],
         "summary": "Change password",
+        "description": "Third step of password recovery. Input new password",
         "operationId": "changePasswordUsingPUT",
         "parameters": [
           {
@@ -723,7 +744,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "title": "ResponseResetPassword",
+                  "title": "ResponseUserSecurityStatus",
                   "type": "object",
                   "properties": {
                     "email": {
@@ -733,7 +754,7 @@
                       "type": "string"
                     }
                   },
-                  "description": "Request for new password"
+                  "description": "Response to security operations with a user"
                 }
               }
             }
@@ -879,6 +900,7 @@
           "auth-controller"
         ],
         "summary": "Repair password send link",
+        "description": "First step of password recovery. Send link to email",
         "operationId": "requestResetPasswordUsingPOST",
         "parameters": [
           {
@@ -924,6 +946,7 @@
           "auth-controller"
         ],
         "summary": "verify code",
+        "description": "Second step of password recovery. Follow to link",
         "operationId": "verifyCodeUsingGET",
         "parameters": [
           {
@@ -953,7 +976,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "title": "ResponseResetPassword",
+                  "title": "ResponseUserSecurityStatus",
                   "type": "object",
                   "properties": {
                     "email": {
@@ -963,7 +986,7 @@
                       "type": "string"
                     }
                   },
-                  "description": "Request for new password"
+                  "description": "Response to security operations with a user"
                 }
               }
             }
@@ -2722,6 +2745,424 @@
         }
       }
     },
+    "/operations/moving": {
+      "get": {
+        "tags": [
+          "operation-controller"
+        ],
+        "summary": "Get moving operations by user email",
+        "operationId": "getOperationsMovingUsingGET",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "startDate",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "endDate",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDesc",
+            "in": "query",
+            "description": "sortDesc",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "from",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "size",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "title": "ResponseOperationMoving",
+                    "type": "object",
+                    "properties": {
+                      "accountFrom": {
+                        "title": "AccountDtoShort",
+                        "type": "object",
+                        "properties": {
+                          "currency": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer",
+                            "format": "int64"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "accountTo": {
+                        "title": "AccountDtoShort",
+                        "type": "object",
+                        "properties": {
+                          "currency": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "integer",
+                            "format": "int64"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "amount": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "createdOn": {
+                        "type": "string",
+                        "example": "yyyy-MM-dd HH:mm:ss"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer",
+                        "format": "int64"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "operation-controller"
+        ],
+        "summary": "Create a new operation of moving",
+        "operationId": "addOperationMovingUsingPOST",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "OperationMovingDto",
+                "required": [
+                  "accountFromId",
+                  "accountToId",
+                  "amount"
+                ],
+                "type": "object",
+                "properties": {
+                  "accountFromId": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "accountToId": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "createdOn": {
+                    "type": "string",
+                    "example": "yyyy-MM-dd HH:mm:ss"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "ResponseOperationMoving",
+                  "type": "object",
+                  "properties": {
+                    "accountFrom": {
+                      "title": "AccountDtoShort",
+                      "type": "object",
+                      "properties": {
+                        "currency": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "accountTo": {
+                      "title": "AccountDtoShort",
+                      "type": "object",
+                      "properties": {
+                        "currency": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "createdOn": {
+                      "type": "string",
+                      "example": "yyyy-MM-dd HH:mm:ss"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/operations/moving/{operationId}": {
+      "get": {
+        "tags": [
+          "operation-controller"
+        ],
+        "summary": "getOperationMovingById",
+        "operationId": "getOperationMovingByIdUsingGET",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operationId",
+            "in": "path",
+            "description": "operationId",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "ResponseOperationMoving",
+                  "type": "object",
+                  "properties": {
+                    "accountFrom": {
+                      "title": "AccountDtoShort",
+                      "type": "object",
+                      "properties": {
+                        "currency": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "accountTo": {
+                      "title": "AccountDtoShort",
+                      "type": "object",
+                      "properties": {
+                        "currency": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "createdOn": {
+                      "type": "string",
+                      "example": "yyyy-MM-dd HH:mm:ss"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/users/{userId}": {
       "get": {
         "tags": [
@@ -3013,6 +3454,36 @@
           }
         }
       },
+      "OperationMovingDto": {
+        "title": "OperationMovingDto",
+        "required": [
+          "accountFromId",
+          "accountToId",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "accountFromId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accountToId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "createdOn": {
+            "type": "string",
+            "example": "yyyy-MM-dd HH:mm:ss"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
       "RegistrationRequest": {
         "title": "RegistrationRequest",
         "required": [
@@ -3115,8 +3586,61 @@
           }
         }
       },
-      "ResponseResetPassword": {
-        "title": "ResponseResetPassword",
+      "ResponseOperationMoving": {
+        "title": "ResponseOperationMoving",
+        "type": "object",
+        "properties": {
+          "accountFrom": {
+            "title": "AccountDtoShort",
+            "type": "object",
+            "properties": {
+              "currency": {
+                "type": "string"
+              },
+              "id": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "accountTo": {
+            "title": "AccountDtoShort",
+            "type": "object",
+            "properties": {
+              "currency": {
+                "type": "string"
+              },
+              "id": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "createdOn": {
+            "type": "string",
+            "example": "yyyy-MM-dd HH:mm:ss"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ResponseUserSecurityStatus": {
+        "title": "ResponseUserSecurityStatus",
         "type": "object",
         "properties": {
           "email": {
@@ -3126,7 +3650,7 @@
             "type": "string"
           }
         },
-        "description": "Request for new password"
+        "description": "Response to security operations with a user"
       },
       "UpdateAccount": {
         "title": "UpdateAccount",

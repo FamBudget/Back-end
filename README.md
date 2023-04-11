@@ -54,13 +54,13 @@ The application is built using Java 11 and Spring Boot, along with several other
 ### How to run this project :
 
 #### Firstly one need to install PostgreSQL and create "budget" database in it.
-#### User for DB: postgres
+#### User for DB: fambudget
 #### Password for DB: 817b62
 
 #### After that one need to build the project by Maven
 ```sh
 ##build the project
-mvn clean install
+mvn clean package
 ```
 
 After that one can run the project with the command:

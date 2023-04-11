@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS plans_expense (
     CONSTRAINT unique_plan_expense UNIQUE (category_id, date, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS accounts_move (
+CREATE TABLE IF NOT EXISTS operations_move (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     account_from_id BIGINT REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,
     account_to_id BIGINT REFERENCES accounts(id) ON DELETE CASCADE NOT NULL,

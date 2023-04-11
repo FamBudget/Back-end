@@ -5,4 +5,8 @@ public enum SortParameter {
     DATE,
     AMOUNT,
     ACCOUNT
+    ,
+    ACCOUNT_FROM
+    ,
+    ACCOUNT_TO
 }

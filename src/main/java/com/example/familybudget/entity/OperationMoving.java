@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Entity
-@Table(name = "operations_income")
+@Table(name = "operations_move")
 public class OperationMoving extends BaseEntity {
     @Column(name = "amount")
     private Double amount;

@@ -3,9 +3,11 @@ package com.example.familybudget.controller;
 import com.example.familybudget.exception.ApiError;
 import com.example.familybudget.exception.CurrencyNotValidException;
 import com.example.familybudget.exception.ForbiddenException;
+import com.sun.mail.smtp.SMTPSendFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,6 +38,24 @@ public class ErrorHandler {
         apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         log.warn(String.valueOf(e));
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handleSmtpSendException(final SMTPSendFailedException e) {
+        apiError.setMessage(e.getMessage());
+        apiError.setStatus("INTERNAL_SERVER_ERROR");
+        apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.warn(String.valueOf(e));
+        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handleMailSendException(final MailSendException e) {
+        apiError.setMessage(e.getMessage());
+        apiError.setStatus("INTERNAL_SERVER_ERROR");
+        apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.warn(String.valueOf(e));
+        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler

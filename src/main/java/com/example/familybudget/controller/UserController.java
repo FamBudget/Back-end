@@ -2,9 +2,7 @@ package com.example.familybudget.controller;
 
 import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.UserDto;
-import com.example.familybudget.entity.User;
-import com.example.familybudget.mapper.UserMapper;
-import com.example.familybudget.repository.UserRepository;
+import com.example.familybudget.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +18,27 @@ import javax.validation.constraints.NotBlank;
 @Validated
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final ControllerUtil controllerUtil;
     private static final String AUTHORIZATION = "Authorization";
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDto>  getUserById(@RequestHeader(AUTHORIZATION) String token,
-                                                @NotBlank @Email @RequestParam String email,
-                                                @PathVariable long userId) {
+    @GetMapping
+    public ResponseEntity<UserDto> getUserByEmail(@RequestHeader(AUTHORIZATION) String token,
+                                                  @NotBlank @Email @RequestParam String email) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        User user = userRepository.getById(userId);
-        return new ResponseEntity<>(UserMapper.INSTANCE.toUserDto(user), HttpStatus.OK);
+        UserDto userDto = userService.getUserByEmail(email);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?>  deleteUserByEmail(@RequestHeader(AUTHORIZATION) String token,
+                                                      @NotBlank
+                                                      @Email
+                                                      @RequestParam String email) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        userService.deleteUserByEmail(email);
+        return ResponseEntity.ok().build();
     }
 }

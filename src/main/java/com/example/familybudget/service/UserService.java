@@ -2,8 +2,10 @@ package com.example.familybudget.service;
 
 import com.example.familybudget.dto.NewPasswordRequest;
 import com.example.familybudget.dto.ResponseUserSecurityStatus;
+import com.example.familybudget.dto.UserDto;
 import com.example.familybudget.entity.*;
 import com.example.familybudget.exception.ForbiddenException;
+import com.example.familybudget.mapper.UserMapper;
 import com.example.familybudget.repository.AccountRepository;
 import com.example.familybudget.repository.CategoryExpenseRepository;
 import com.example.familybudget.repository.CategoryIncomeRepository;
@@ -65,6 +67,18 @@ public class UserService {
         } else {
             throw new EntityNotFoundException("There is no " + email + " in the database with this password");
         }
+    }
+
+    public UserDto getUserByEmail(String email) {
+        User user = findByEmail(email);
+        log.debug("Got user {} by email", user);
+        return UserMapper.INSTANCE.toUserDto(user);
+    }
+
+    public void deleteUserByEmail(String email) {
+        User user = findByEmail(email);
+        userRepository.deleteById(user.getId());
+        log.debug("User {} was deleted", email);
     }
 
     public ResponseUserSecurityStatus activateUser(String code) {

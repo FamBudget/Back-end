@@ -2,6 +2,7 @@ package com.example.familybudget.service;
 
 import com.example.familybudget.dto.NewPasswordRequest;
 import com.example.familybudget.dto.ResponseUserSecurityStatus;
+import com.example.familybudget.dto.UpdateUserRequest;
 import com.example.familybudget.dto.UserDto;
 import com.example.familybudget.entity.*;
 import com.example.familybudget.exception.ForbiddenException;
@@ -158,7 +159,7 @@ public class UserService {
         return responseUserSecurityStatus;
     }
 
-    public ResponseUserSecurityStatus changePassword(String email, String code, NewPasswordRequest passwordRequest) {
+    public ResponseUserSecurityStatus repairPassword(String email, String code, NewPasswordRequest passwordRequest) {
         User user = userRepository.findByActivationCode(code);
         if (user == null) {
             throw new EntityNotFoundException("Activation code not found");
@@ -175,8 +176,39 @@ public class UserService {
         responseUserSecurityStatus.setStatus("success");
         responseUserSecurityStatus.setEmail(user.getEmail());
 
-        log.debug("User password was was changed: ");
+        log.debug("User password was changed: ");
         return responseUserSecurityStatus;
+    }
+
+    public ResponseUserSecurityStatus changePassword(String email, NewPasswordRequest passwordRequest) {
+
+        User user = findByEmail(email);
+
+        user.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
+        userRepository.save(user);
+
+        ResponseUserSecurityStatus responseUserSecurityStatus = new ResponseUserSecurityStatus();
+        responseUserSecurityStatus.setStatus("success");
+        responseUserSecurityStatus.setEmail(user.getEmail());
+
+        log.debug("User password was changed: ");
+        return responseUserSecurityStatus;
+    }
+
+    public UserDto updateUser(String email, UpdateUserRequest updateUser) {
+        User user = findByEmail(email);
+        if (updateUser.getEmail() != null) {
+            user.setEmail(updateUser.getEmail());
+        }
+        if (updateUser.getFirstName() != null) {
+            user.setFirstName(updateUser.getFirstName());
+        }
+        if (updateUser.getLastName() != null) {
+            user.setLastName(updateUser.getLastName());
+        }
+        userRepository.save(user);
+        log.debug("Update user {}", user);
+        return UserMapper.INSTANCE.toUserDto(user);
     }
 
     private String getIp() {

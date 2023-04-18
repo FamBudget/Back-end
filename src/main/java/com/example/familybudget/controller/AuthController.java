@@ -112,7 +112,7 @@ public class AuthController {
     public ResponseEntity<ResponseUserSecurityStatus>  changePassword(@NotBlank @Email @RequestParam String email,
                                                                       @PathVariable @NotBlank String code,
                                                                       @RequestBody @Valid NewPasswordRequest newPasswordRequest) {
-        ResponseUserSecurityStatus resetPassword = userService.changePassword(email, code, newPasswordRequest);
+        ResponseUserSecurityStatus resetPassword = userService.repairPassword(email, code, newPasswordRequest);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 }

@@ -3168,7 +3168,8 @@
         "tags": [
           "user-controller"
         ],
-        "summary": "getUserByEmail",
+        "summary": "Get user info",
+        "description": "Get user info by email",
         "operationId": "getUserByEmailUsingGET",
         "parameters": [
           {
@@ -3250,11 +3251,130 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Update user info",
+        "description": "Update user info",
+        "operationId": "updateUserUsingPUT",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "UpdateUserRequest",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User email",
+                    "example": "test@mail.com"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "first name",
+                    "example": "Mikhail"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "Last name",
+                    "example": "Stone"
+                  }
+                },
+                "description": "Request for update User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "UserDto",
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "Currency",
+                      "example": "RUB_RUS",
+                      "enum": [
+                        "DOLLAR_USA",
+                        "EURO_EU",
+                        "RUB_BEL",
+                        "RUB_RUS",
+                        "TENGE_KAZ"
+                      ]
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "User email",
+                      "example": "test@mail.com"
+                    },
+                    "firstName": {
+                      "type": "string",
+                      "description": "first name",
+                      "example": "Mikhail"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "description": "User ID",
+                      "format": "int64",
+                      "example": 1
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "description": "Last name",
+                      "example": "Stone"
+                    }
+                  },
+                  "description": "Short information about requested user"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "user-controller"
         ],
-        "summary": "deleteUserByEmail",
+        "summary": "Delete user",
+        "description": "Delete user by email",
         "operationId": "deleteUserByEmailUsingDELETE",
         "parameters": [
           {
@@ -3296,6 +3416,98 @@
           },
           "403": {
             "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/users/change-password": {
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Change password",
+        "description": "Input new password",
+        "operationId": "changePasswordUsingPUT_1",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "email",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "NewPasswordRequest",
+                "required": [
+                  "confirmPassword",
+                  "password"
+                ],
+                "type": "object",
+                "properties": {
+                  "confirmPassword": {
+                    "type": "string",
+                    "description": "confirmPassword",
+                    "example": "12qwaszx!@QWASZX"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password",
+                    "example": "12qwaszx!@QWASZX"
+                  }
+                },
+                "description": "Request for new password"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "title": "ResponseUserSecurityStatus",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "Response to security operations with a user"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -3713,6 +3925,28 @@
             "format": "double"
           }
         }
+      },
+      "UpdateUserRequest": {
+        "title": "UpdateUserRequest",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "test@mail.com"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "first name",
+            "example": "Mikhail"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name",
+            "example": "Stone"
+          }
+        },
+        "description": "Request for update User"
       },
       "UserDto": {
         "title": "UserDto",

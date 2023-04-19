@@ -37,8 +37,20 @@ public class UserService {
     private final EmailProvider emailProvider;
     private final CategoryIncomeRepository categoryIncomeRepository;
     private final CategoryExpenseRepository categoryExpenseRepository;
-    private final List<String> categoryIncomeList = List.of("Category1", "Category2", "Category3");
-    private final List<String> categoryExpenseList = List.of("Category1", "Category2", "Category3");
+    private final List<String> categoryIncomeList = List.of(
+            "Заработная плата",
+            "Подработка",
+            "Проценты по вкладу");
+    private final List<String> categoryExpenseList = List.of(
+            "Продукты",
+            "Еда вне дома",
+            "Дом",
+            "Транспорт",
+            "Сотовая связь",
+            "Одежда",
+            "Медицина",
+            "Развлечения",
+            "Другое");
 
     public void registerUser(User user) {
 

@@ -30,7 +30,7 @@ public class MailConfig {
 
         mailSender.setHost(host);
         mailSender.setPort(port);
-        mailSender.setUsername(username);
+        mailSender.setUsername(username.substring(0, username.indexOf("@")));
         mailSender.setPassword(password);
 
         Properties properties = mailSender.getJavaMailProperties();

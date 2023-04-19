@@ -16,7 +16,7 @@
   },
   "servers": [
     {
-      "url": "http://mail.mikarte.org:8080",
+      "url": "http://localhost:8080",
       "description": "Inferred Url"
     }
   ],

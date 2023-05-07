@@ -7,11 +7,11 @@ import java.util.Optional;
 @AllArgsConstructor
 public enum Currency {
 
-    RUB_RUS("Российский рубль"),
-    RUB_BEL("Белорусский рубль"),
-    TENGE_KAZ("Казахстанский тенге"),
-    DOLLAR_USA("Доллар США"),
-    EURO_EU("Евро");
+    RUB("Российский рубль"),
+    BYN("Белорусский рубль"),
+    KZT("Казахстанский тенге"),
+    USD("Доллар США"),
+    EUR("Евро");
 
     private final String title;
 

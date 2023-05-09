@@ -51,7 +51,7 @@ jobs:
            echo "$PRIVATE_KEY" > fambudget.pem && chmod 600 fambudget.pem
            ssh -o StrictHostKeyChecking=no -i fambudget.pem ${USER_NAME}@${HOSTNAME}    ' 
              docker login --username=${DOCKER_HUB_USERNAME} --password=${DOCKER_HUB_PASSWORD}
-             sudo docker run -d --name 'fambudget_back' -p 8080:8080 -p 25:25 -p 5432:5432 fambudget/fambudget_back:latest          
+             sudo docker run -d --name 'fambudget_back' -p 8080:8080 -p 25:25 fambudget/fambudget_back:latest          
             '       
 
 # sudo docker run -d --name 'fambudget_back' -p 8080:8080 fambudget/fambudget_back:${{github.run_number}}

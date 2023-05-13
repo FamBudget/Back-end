@@ -40,7 +40,7 @@ public class AuthController {
             "password and confirmPassword don't match or currency has incorrect name, " +
             "an appropriate exception will be thrown")
     @PostMapping("/registration")
-    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
+    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) throws Exception {
         Currency currency = Currency.valid(registrationRequest.getCurrency())
                 .orElseThrow(() -> new CurrencyNotValidException("Unknown state: " + registrationRequest.getCurrency()));
         User user = UserMapper.INSTANCE.registrationToUser(registrationRequest);

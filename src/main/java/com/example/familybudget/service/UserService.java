@@ -12,6 +12,7 @@ import com.example.familybudget.repository.CategoryExpenseRepository;
 import com.example.familybudget.repository.CategoryIncomeRepository;
 import com.example.familybudget.repository.UserRepository;
 import com.example.familybudget.service.util.EmailProvider;
+import com.example.familybudget.service.util.GmailProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +36,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailProvider emailProvider;
+    private final GmailProvider gmailProvider;
     private final CategoryIncomeRepository categoryIncomeRepository;
     private final CategoryExpenseRepository categoryExpenseRepository;
     private final List<String> categoryIncomeList = List.of(
@@ -52,7 +54,7 @@ public class UserService {
             "Развлечения",
             "Другое");
 
-    public void registerUser(User user) {
+    public void registerUser(User user) throws Exception {
 
         user.setRole(Role.USER);
         user.setStatus(Status.NOT_ACTIVE);
@@ -68,7 +70,7 @@ public class UserService {
                 "Hello, %s! \n" +
                         "Welcome to Family Budget. Please, visit next link: %s",
                 user.getEmail(), activationLink);
-        emailProvider.send(user.getEmail(), "Activation Code", message);
+        gmailProvider.sendMail(user.getEmail(), "Activation Code", message);
     }
 
     public User findByEmailAndPassword(String email, String password) {

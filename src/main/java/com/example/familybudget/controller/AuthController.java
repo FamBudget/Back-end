@@ -69,15 +69,6 @@ public class AuthController {
         return new ResponseEntity<>(authenticationResponse, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Activation registered user", notes = "Returns a result about the activation status")
-    @GetMapping("/activate/{code}")
-    public ResponseEntity<ResponseUserSecurityStatus> activate(@PathVariable @NotBlank String code) {
-
-        ResponseUserSecurityStatus result = userService.activateUser(code);
-
-            return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
     @ApiOperation(value = "Logout user", notes = "Returns the token success lock result")
     @PostMapping("/auth/logout")
     public ResponseEntity<ResponseUserSecurityStatus>  logout(@RequestHeader(AUTHORIZATION) String token,

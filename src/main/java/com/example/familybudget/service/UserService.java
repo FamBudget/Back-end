@@ -11,16 +11,14 @@ import com.example.familybudget.repository.AccountRepository;
 import com.example.familybudget.repository.CategoryExpenseRepository;
 import com.example.familybudget.repository.CategoryIncomeRepository;
 import com.example.familybudget.repository.UserRepository;
-import com.example.familybudget.service.util.EmailProvider;
 import com.example.familybudget.service.util.GmailProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +33,11 @@ public class UserService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailProvider emailProvider;
     private final GmailProvider gmailProvider;
     private final CategoryIncomeRepository categoryIncomeRepository;
     private final CategoryExpenseRepository categoryExpenseRepository;
+    @Value("${server.ip}")
+    private String serverIp;
     private final List<String> categoryIncomeList = List.of(
             "Заработная плата",
             "Подработка",
@@ -62,15 +61,13 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
-        String serverIP = getIp();
-
-        String activationLink = "http://" + serverIP + ":8080/activate/" + user.getActivationCode();
+        activateUser(user.getActivationCode());
 
         String message = String.format(
-                "Hello, %s! \n" +
-                        "Welcome to Family Budget. Please, visit next link: %s",
-                user.getEmail(), activationLink);
-        gmailProvider.sendMail(user.getEmail(), "Activation Code", message);
+                "Hello, %s %s! \n" +
+                        "Welcome to Family Budget. User with email %s was registered",
+                user.getFirstName(), user.getLastName(), user.getEmail());
+        gmailProvider.sendMail(user.getEmail(), "User Registration", message);
     }
 
     public User findByEmailAndPassword(String email, String password) {
@@ -136,22 +133,20 @@ public class UserService {
         return result;
     }
 
-    public void requestResetPassword(String email) {
+    public void requestResetPassword(String email) throws Exception {
         User user = findByEmail(email);
         log.debug("repairing user password by email {}", email);
 
         user.setActivationCode(UUID.randomUUID().toString());
         userRepository.save(user);
 
-        String serverIP = getIp();
-
-        String resetPasswordLink = "http://" + serverIP + ":8080/reset-password";
+        String resetPasswordLink = "http://" + serverIp + ":8080/reset-password";
 
         String message = String.format(
                 "Hello, %s! \n" +
                         "Follow the link to reset your password. If you did not make this request, then simply ignore this letter: %s/%s",
                 email, resetPasswordLink, user.getActivationCode() + "?email=" + email);
-        emailProvider.send(user.getEmail(), "repair password", message);
+        gmailProvider.sendMail(user.getEmail(), "repair password", message);
         log.debug("sending new password typing link");
     }
 
@@ -223,16 +218,6 @@ public class UserService {
         userRepository.save(user);
         log.debug("Update user {}", user);
         return UserMapper.INSTANCE.toUserDto(user);
-    }
-
-    private String getIp() {
-        String serverIP;
-        try {
-            serverIP = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            serverIP = "localhost";
-        }
-        return serverIP;
     }
 
     private User findByEmail(String email) {

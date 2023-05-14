@@ -94,7 +94,7 @@ public class AuthController {
 
     @ApiOperation(value = "Repair password send link", notes = "First step of password recovery. Send link to email")
     @PostMapping("/reset-password")
-    public ResponseEntity<?>  requestResetPassword(@NotBlank @Email @RequestParam String email) {
+    public ResponseEntity<?>  requestResetPassword(@NotBlank @Email @RequestParam String email) throws Exception {
         userService.requestResetPassword(email);
         return ResponseEntity.ok().build();
     }

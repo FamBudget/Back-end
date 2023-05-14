@@ -59,15 +59,13 @@ public class UserService {
         user.setStatus(Status.NOT_ACTIVE);
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-
-        activateUser(user.getActivationCode());
-
         String message = String.format(
                 "Hello, %s %s! \n" +
                         "Welcome to Family Budget. User with email %s was registered",
                 user.getFirstName(), user.getLastName(), user.getEmail());
         gmailProvider.sendMail(user.getEmail(), "User Registration", message);
+        userRepository.save(user);
+        activateUser(user.getActivationCode());
     }
 
     public User findByEmailAndPassword(String email, String password) {

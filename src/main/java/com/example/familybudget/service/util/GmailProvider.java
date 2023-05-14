@@ -23,8 +23,6 @@ import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.Set;
@@ -48,16 +46,6 @@ public class GmailProvider {
                 .build();
     }
 
-    private String getIp() {
-        String serverIP;
-        try {
-            serverIP = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            serverIP = "localhost";
-        }
-        return serverIP;
-    }
-
     private Credential getCredentials(final NetHttpTransport httpTransport, GsonFactory jsonFactory)
             throws IOException {
         GoogleClientSecrets clientSecrets =
@@ -70,7 +58,7 @@ public class GmailProvider {
                 .setAccessType("offline")
                 .build();
 
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setHost(getIp()).setPort(8888).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 

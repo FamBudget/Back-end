@@ -56,7 +56,7 @@ jobs:
              sudo docker rmi fambudget/fambudget_back:latest
              sudo docker images -a
              sudo docker ps -a
-             sudo docker run -d --name 'fambudget_back' -p 8080:8080 -p 25:25 fambudget/fambudget_back:latest          
+             sudo docker run -d --name 'fambudget_back' -p 8080:8080 -p 25:25 -p 8888:8888 fambudget/fambudget_back:latest          
             '       
 
 # sudo docker run -d --name 'fambudget_back' -p 8080:8080 fambudget/fambudget_back:${{github.run_number}}

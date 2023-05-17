@@ -91,7 +91,7 @@ public class UserService {
         log.debug("User {} was deleted", email);
     }
 
-    public ResponseUserSecurityStatus activateUser(String code) {
+    public void activateUser(String code) {
         User user = userRepository.findByActivationCode(code);
         if (user == null) {
             throw new EntityNotFoundException("Activation code not found");
@@ -125,44 +125,27 @@ public class UserService {
         account.setCreatedOn(LocalDateTime.now());
         accountRepository.save(account);
         log.debug("Added new account {} for user: {}", account, user);
-        ResponseUserSecurityStatus result = new ResponseUserSecurityStatus();
-        result.setEmail(user.getEmail());
-        result.setStatus("User activated");
-        return result;
     }
 
-    public void requestResetPassword(String email) throws Exception {
+    public ResponseUserSecurityStatus requestResetPassword(String email) throws Exception {
         User user = findByEmail(email);
         log.debug("repairing user password by email {}", email);
 
         user.setActivationCode(UUID.randomUUID().toString());
         userRepository.save(user);
 
-        String resetPasswordLink = "http://" + serverIp + ":8080/reset-password";
+        String resetPasswordLink = "http://" + serverIp + "/?code=";
 
         String message = String.format(
                 "Hello, %s! \n" +
-                        "Follow the link to reset your password. If you did not make this request, then simply ignore this letter: %s/%s",
-                email, resetPasswordLink, user.getActivationCode() + "?email=" + email);
+                        "Follow the link to reset your password. If you did not make this request, then simply ignore this letter: %s%s",
+                email, resetPasswordLink, user.getActivationCode() + "&email=" + email);
         gmailProvider.sendMail(user.getEmail(), "repair password", message);
         log.debug("sending new password typing link");
-    }
-
-    public ResponseUserSecurityStatus verifyCode(String email, String code) {
-        User user = userRepository.findByActivationCode(code);
-        if (user == null) {
-            throw new EntityNotFoundException("Activation code not found");
-        }
-
-        if (!email.equals(user.getEmail())) {
-            throw new ForbiddenException("This code does not apply to this user");
-        }
-
         ResponseUserSecurityStatus responseUserSecurityStatus = new ResponseUserSecurityStatus();
-        responseUserSecurityStatus.setStatus("success");
+        responseUserSecurityStatus.setStatus("sendEmail");
         responseUserSecurityStatus.setEmail(user.getEmail());
 
-        log.debug("starting the user password reset process {}: ", user.getEmail());
         return responseUserSecurityStatus;
     }
 

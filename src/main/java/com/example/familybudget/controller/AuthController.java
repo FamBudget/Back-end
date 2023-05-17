@@ -85,20 +85,12 @@ public class AuthController {
 
     @ApiOperation(value = "Repair password send link", notes = "First step of password recovery. Send link to email")
     @PostMapping("/reset-password")
-    public ResponseEntity<?>  requestResetPassword(@NotBlank @Email @RequestParam String email) throws Exception {
-        userService.requestResetPassword(email);
-        return ResponseEntity.ok().build();
-    }
-
-    @ApiOperation(value = "verify code", notes = "Second step of password recovery. Follow to link")
-    @GetMapping("/reset-password/{code}")
-    public ResponseEntity<ResponseUserSecurityStatus> verifyCode(@NotBlank @Email @RequestParam String email,
-                                                                 @PathVariable @NotBlank String code) {
-        ResponseUserSecurityStatus resetPassword = userService.verifyCode(email, code);
+    public ResponseEntity<ResponseUserSecurityStatus>  requestResetPassword(@NotBlank @Email @RequestParam String email) throws Exception {
+        ResponseUserSecurityStatus resetPassword = userService.requestResetPassword(email);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Change password", notes = "Third step of password recovery. Input new password")
+    @ApiOperation(value = "Change password", notes = "Second step of password recovery. Input new password")
     @PutMapping("/change-password/{code}")
     public ResponseEntity<ResponseUserSecurityStatus>  changePassword(@NotBlank @Email @RequestParam String email,
                                                                       @PathVariable @NotBlank String code,

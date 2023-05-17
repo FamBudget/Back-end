@@ -137,9 +137,9 @@ public class UserService {
         String resetPasswordLink = "http://" + serverIp + "/?code=";
 
         String message = String.format(
-                "Hello, %s! \n" +
+                "Hello, %s %s! \n" +
                         "Follow the link to reset your password. If you did not make this request, then simply ignore this letter: %s%s",
-                email, resetPasswordLink, user.getActivationCode() + "&email=" + email);
+                user.getFirstName(), user.getLastName(), resetPasswordLink, user.getActivationCode() + "&email=" + email);
         gmailProvider.sendMail(user.getEmail(), "repair password", message);
         log.debug("sending new password typing link");
         ResponseUserSecurityStatus responseUserSecurityStatus = new ResponseUserSecurityStatus();

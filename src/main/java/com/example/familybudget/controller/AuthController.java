@@ -90,6 +90,14 @@ public class AuthController {
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "verify code", notes = "verification code for repair password")
+    @GetMapping("/verify-code/{code}")
+    public ResponseEntity<ResponseUserSecurityStatus> verifyCode(@NotBlank @Email @RequestParam String email,
+                                                                 @PathVariable @NotBlank String code) {
+        ResponseUserSecurityStatus resetPassword = userService.verifyCode(email, code);
+        return new ResponseEntity<>(resetPassword, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Change password", notes = "Second step of password recovery. Input new password")
     @PutMapping("/change-password/{code}")
     public ResponseEntity<ResponseUserSecurityStatus>  changePassword(@NotBlank @Email @RequestParam String email,

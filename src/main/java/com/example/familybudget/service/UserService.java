@@ -149,6 +149,24 @@ public class UserService {
         return responseUserSecurityStatus;
     }
 
+    public ResponseUserSecurityStatus verifyCode(String email, String code) {
+        User user = userRepository.findByActivationCode(code);
+        if (user == null) {
+            throw new EntityNotFoundException("Activation code not found");
+        }
+
+        if (!email.equals(user.getEmail())) {
+            throw new ForbiddenException("This code does not apply to this user");
+        }
+
+        ResponseUserSecurityStatus responseUserSecurityStatus = new ResponseUserSecurityStatus();
+        responseUserSecurityStatus.setStatus("success");
+        responseUserSecurityStatus.setEmail(user.getEmail());
+
+        log.debug("starting the user password reset process {}: ", user.getEmail());
+        return responseUserSecurityStatus;
+    }
+
     public ResponseUserSecurityStatus repairPassword(String email, String code, NewPasswordRequest passwordRequest) {
         User user = userRepository.findByActivationCode(code);
         if (user == null) {

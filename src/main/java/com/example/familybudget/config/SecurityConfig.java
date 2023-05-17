@@ -31,6 +31,7 @@ public class SecurityConfig {
     private static final String ACTIVATE_ENDPOINT = "/activate/*";
     private static final String RESET_PASSWORD = "/reset-password/**";
     private static final String CHANGE_PASSWORD = "/change-password/**";
+    private static final String VERIFY_CODE = "/verify-code/**";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,7 +40,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .cors() // включаем поддержку CORS
+                .cors()
                 .and()
                 .authorizeRequests()
                 .antMatchers(SWAGGER).permitAll()
@@ -52,6 +53,7 @@ public class SecurityConfig {
                 .antMatchers(AUTHENTICATION_ENDPOINT).permitAll()
                 .antMatchers(RESET_PASSWORD).permitAll()
                 .antMatchers(CHANGE_PASSWORD).permitAll()
+                .antMatchers(VERIFY_CODE).permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(authenticationEntryPoint)

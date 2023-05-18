@@ -123,6 +123,7 @@ public class UserService {
         account.setUser(user);
         account.setName("Наличные");
         account.setCreatedOn(LocalDateTime.now());
+        account.setIconNumber(0L);
         accountRepository.save(account);
         log.debug("Added new account {} for user: {}", account, user);
     }

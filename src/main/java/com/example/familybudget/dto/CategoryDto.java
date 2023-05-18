@@ -16,4 +16,6 @@ public class CategoryDto {
     @ApiModelProperty(notes = "Category name", example = "Category1", required = true)
     @NotBlank
     private String name;
+    @ApiModelProperty(notes = "Icon number", example = "1")
+    private Long iconNumber;
 }

@@ -17,4 +17,6 @@ public class CategoryIncome extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Column(name = "icon_number")
+    private Long iconNumber;
 }

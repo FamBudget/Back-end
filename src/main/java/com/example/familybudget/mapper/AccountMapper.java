@@ -18,6 +18,7 @@ public interface AccountMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "currency", target = "currency")
     @Mapping(source = "createdOn", target = "createdOn")
+    @Mapping(source = "iconNumber", target = "iconNumber")
     AccountDto toAccountDto(Account account);
 
     @Mapping(source = "accountDto.startAmount", target = "startAmount")
@@ -26,5 +27,6 @@ public interface AccountMapper {
     @Mapping(source = "accountDto.currency", target = "currency")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "accountDto.createdOn", target = "createdOn")
+    @Mapping(source = "accountDto.iconNumber", target = "iconNumber")
     Account toAccount(NewAccountDto accountDto, User user);
 }

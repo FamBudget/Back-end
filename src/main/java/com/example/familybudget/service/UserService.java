@@ -105,11 +105,11 @@ public class UserService {
         List<CategoryExpense> listExpense = new ArrayList<>();
 
         for (String category: categoryIncomeList) {
-            listIncome.add(new CategoryIncome(category, user));
+            listIncome.add(new CategoryIncome(category, user,0L));
         }
 
         for (String category: categoryExpenseList) {
-            listExpense.add(new CategoryExpense(category, user));
+            listExpense.add(new CategoryExpense(category, user, 0L));
         }
 
         categoryIncomeRepository.saveAll(listIncome);

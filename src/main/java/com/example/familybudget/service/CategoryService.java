@@ -95,7 +95,12 @@ public class CategoryService {
         if (!email.equals(category.getUser().getEmail())) {
             throw new ForbiddenException("This user can't update this category");
         }
+
         category.setName(categoryDto.getName());
+
+        if (categoryDto.getIconNumber() != null) {
+            category.setIconNumber(categoryDto.getIconNumber());
+        }
         CategoryDto categoryDtoResponse = CategoryMapper.INSTANCE.toCategoryDto(categoryIncomeRepository.save(category));
         log.debug("Category of income: {} was updated", category.getId());
         return categoryDtoResponse;
@@ -108,6 +113,11 @@ public class CategoryService {
             throw new ForbiddenException("This user can't update this category");
         }
         category.setName(categoryDto.getName());
+
+        if (categoryDto.getIconNumber() != null) {
+            category.setIconNumber(categoryDto.getIconNumber());
+        }
+
         CategoryDto categoryDtoResponse = CategoryMapper.INSTANCE.toCategoryDto(categoryExpenseRepository.save(category));
         log.debug("Category of income: {} was updated", category.getId());
         return categoryDtoResponse;

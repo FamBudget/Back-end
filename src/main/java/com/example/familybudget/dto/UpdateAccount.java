@@ -21,4 +21,5 @@ public class UpdateAccount {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
     @PastOrPresent
     private LocalDateTime createdOn;
+    private Long iconNumber;
 }

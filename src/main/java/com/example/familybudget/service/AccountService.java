@@ -88,6 +88,10 @@ public class AccountService {
         if (updateAccount.getName() != null) {
             account.setName(updateAccount.getName());
         }
+
+        if (updateAccount.getIconNumber() != null) {
+            account.setIconNumber(updateAccount.getIconNumber());
+        }
         AccountDto accountDto = AccountMapper.INSTANCE.toAccountDto(accountRepository.save(account));
         log.debug("Account: {} was updated", account.getId());
         return accountDto;

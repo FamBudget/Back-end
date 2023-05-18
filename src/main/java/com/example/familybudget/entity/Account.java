@@ -27,4 +27,6 @@ public class Account extends BaseEntity {
     private User user;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
+    @Column(name = "icon_number")
+    private Long iconNumber;
 }

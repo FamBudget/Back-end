@@ -22,4 +22,5 @@ public class NewAccountDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
     @PastOrPresent
     private LocalDateTime createdOn;
+    private Long iconNumber;
 }

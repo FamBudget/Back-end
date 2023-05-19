@@ -76,6 +76,9 @@ public class CategoryService {
     public CategoryDto addCategoryIncome(NewCategoryDto categoryDto, String email) {
         User user = findUserByEmail(email);
         CategoryIncome category = CategoryMapper.INSTANCE.toCategoryIncome(categoryDto, user);
+        if (category.getIconNumber() == null) {
+            category.setIconNumber(0L);
+        }
         categoryIncomeRepository.save(category);
         log.debug("Added new category of income: {} by user: {}", category, user);
         return CategoryMapper.INSTANCE.toCategoryDto(category);
@@ -84,6 +87,9 @@ public class CategoryService {
     public CategoryDto addCategoryExpense(NewCategoryDto categoryDto, String email) {
         User user = findUserByEmail(email);
         CategoryExpense category = CategoryMapper.INSTANCE.toCategoryExpense(categoryDto, user);
+        if (category.getIconNumber() == null) {
+            category.setIconNumber(0L);
+        }
         categoryExpenseRepository.save(category);
         log.debug("Added new category of expense: {} by user: {}", category, user);
         return CategoryMapper.INSTANCE.toCategoryDto(category);

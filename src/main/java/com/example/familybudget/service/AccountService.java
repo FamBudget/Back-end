@@ -45,6 +45,10 @@ public class AccountService {
         if (account.getCreatedOn() == null) {
             account.setCreatedOn(LocalDateTime.now());
         }
+
+        if (account.getIconNumber() == null) {
+            account.setIconNumber(0L);
+        }
         account.setCurrency(user.getCurrency());
         AccountDto responseAccountDto = AccountMapper
                 .INSTANCE.toAccountDto(accountRepository.save(account));

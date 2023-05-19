@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS categories_income (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL,
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    icon_number BIGINT DEFAULT 0,
+    icon_number BIGINT NOT NULL,
     CONSTRAINT unique_category_income_user UNIQUE (name, user_id)
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS categories_expense (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL,
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    icon_number BIGINT DEFAULT 0,
+    icon_number BIGINT NOT NULL,
     CONSTRAINT unique_category_expense_user UNIQUE (name, user_id)
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     currency VARCHAR(20) NOT NULL,
     created_on TIMESTAMP WITHOUT TIME ZONE,
-    icon_number BIGINT DEFAULT 0,
+    icon_number BIGINT NOT NULL,
     CONSTRAINT unique_name_user UNIQUE (name, user_id)
 );
 

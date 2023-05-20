@@ -266,6 +266,151 @@ public class OperationService {
         return OperationMovingMapper.INSTANCE.toOperationDto(operationSaved);
     }
 
+    @Transactional
+    public ResponseOperation updateOperationExpense(OperationDto operationDto, String email) {
+        findUserByEmail(email);
+        OperationExpense operation = operationExpenseRepository.getById(operationDto.getId());
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't update this operation");
+        }
+
+        Account oldAccount = operation.getAccount();
+        Account account = accountRepository.getById(operationDto.getAccountId());
+        String emailFromAccount = account.getUser().getEmail();
+        if (!email.equals(emailFromAccount)) {
+            throw new ForbiddenException("This account does not apply to this user");
+        }
+
+        CategoryExpense category = categoryExpenseRepository.getById(operationDto.getCategoryId());
+        String emailFromCategory = category.getUser().getEmail();
+        if (!email.equals(emailFromCategory)) {
+            throw new ForbiddenException("This category does not apply to this user");
+        }
+
+        oldAccount.setAmount(oldAccount.getAmount() + operation.getAmount());
+
+        double newAmount = account.getAmount() - operationDto.getAmount();
+        if (newAmount < 0) {
+            throw new ForbiddenException("Not enough money in this account");
+        }
+
+        account.setAmount(newAmount);
+
+        operation.setAmount(operationDto.getAmount());
+
+        if (!oldAccount.equals(account)) {
+            accountRepository.save(oldAccount);
+        }
+        accountRepository.save(account);
+
+        operation.setAccount(account);
+        operation.setCategory(category);
+
+        if (operationDto.getCreatedOn() != null) {
+            operation.setCreatedOn(operationDto.getCreatedOn());
+        }
+
+        if (operationDto.getDescription() != null) {
+            operation.setDescription(operationDto.getDescription());
+        }
+
+        ResponseOperation responseOperation = OperationMapper.INSTANCE
+                .toOperationDto(operationExpenseRepository.save(operation));
+        log.debug("Operation: {} was updated", operation.getId());
+        return responseOperation;
+    }
+
+    @Transactional
+    public ResponseOperation updateOperationIncome(OperationDto operationDto, String email) {
+        findUserByEmail(email);
+        OperationIncome operation = operationIncomeRepository.getById(operationDto.getId());
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't update this operation");
+        }
+
+        Account oldAccount = operation.getAccount();
+        Account account = accountRepository.getById(operationDto.getAccountId());
+        String emailFromAccount = account.getUser().getEmail();
+        if (!email.equals(emailFromAccount)) {
+            throw new ForbiddenException("This account does not apply to this user");
+        }
+
+        CategoryIncome category = categoryIncomeRepository.getById(operationDto.getCategoryId());
+        String emailFromCategory = category.getUser().getEmail();
+        if (!email.equals(emailFromCategory)) {
+            throw new ForbiddenException("This category does not apply to this user");
+        }
+
+        account.setAmount(account.getAmount() + operationDto.getAmount());
+
+        double newAmountForOldAccount = oldAccount.getAmount() - operation.getAmount();
+        if (newAmountForOldAccount < 0) {
+            throw new ForbiddenException("Not enough money in this account");
+        }
+        oldAccount.setAmount(newAmountForOldAccount);
+
+        operation.setAmount(operationDto.getAmount());
+
+        if (!oldAccount.equals(account)) {
+            accountRepository.save(oldAccount);
+        }
+        accountRepository.save(account);
+
+        operation.setAccount(account);
+        operation.setCategory(category);
+
+        if (operationDto.getCreatedOn() != null) {
+            operation.setCreatedOn(operationDto.getCreatedOn());
+        }
+
+        if (operationDto.getDescription() != null) {
+            operation.setDescription(operationDto.getDescription());
+        }
+
+        ResponseOperation responseOperation = OperationMapper.INSTANCE
+                .toOperationDto(operationIncomeRepository.save(operation));
+        log.debug("Operation: {} was updated", operation.getId());
+        return responseOperation;
+    }
+
+    @Transactional
+    public void deleteOperationExpenseById(long id, String email) {
+        findUserByEmail(email);
+        OperationExpense operation = operationExpenseRepository.getById(id);
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't delete this operation");
+        }
+
+        Account account = operation.getAccount();
+
+        account.setAmount(account.getAmount() + operation.getAmount());
+        operationExpenseRepository.deleteById(id);
+        log.debug("Operation of expense with id {} was deleted", id);
+        accountRepository.save(account);
+        log.debug("An amount on the account: {} was updated", account.getId());
+    }
+
+    @Transactional
+    public void deleteOperationIncomeById(long id, String email) {
+        findUserByEmail(email);
+        OperationIncome operation = operationIncomeRepository.getById(id);
+        if (!email.equals(operation.getUser().getEmail())) {
+            throw new ForbiddenException("This user can't delete this operation");
+        }
+
+        Account account = operation.getAccount();
+
+        double newAmount = account.getAmount() - operation.getAmount();
+        if (newAmount < 0) {
+            throw new ForbiddenException("Not enough money in this account");
+        }
+        account.setAmount(newAmount);
+        operationIncomeRepository.deleteById(id);
+        log.debug("Operation of expense with id {} was deleted", id);
+        accountRepository.save(account);
+        log.debug("An amount on the account: {} was updated", account.getId());
+    }
+
     private User findUserByEmail(String email) {
         User user = userRepository.findUserByEmail(email);
         log.debug("finding user by email: {}", email);

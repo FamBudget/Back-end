@@ -1,5 +1,6 @@
 package com.example.familybudget.controller;
 
+import com.example.familybudget.Created;
 import com.example.familybudget.controller.util.ControllerUtil;
 import com.example.familybudget.dto.OperationDto;
 import com.example.familybudget.dto.OperationMovingDto;
@@ -148,10 +149,10 @@ public class OperationController {
         return new ResponseEntity<>(operationDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Create a new operation of income")
+    @ApiOperation(value = "Create income transaction")
     @PostMapping("/income")
     ResponseEntity<ResponseOperation> addOperationIncome(
-            @RequestBody @Valid OperationDto newOperation,
+            @RequestBody @Validated(Created.class) OperationDto newOperation,
             @NotBlank @RequestParam @Email String email,
             @RequestHeader(AUTHORIZATION) String token) {
 
@@ -161,10 +162,10 @@ public class OperationController {
         return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Create a new operation of expense")
+    @ApiOperation(value = "Create expense transaction")
     @PostMapping("/expense")
     ResponseEntity<ResponseOperation> addOperationExpense(
-            @RequestBody @Valid OperationDto newOperation,
+            @RequestBody @Validated(Created.class) OperationDto newOperation,
             @NotBlank @RequestParam @Email String email,
             @RequestHeader(AUTHORIZATION) String token) {
 
@@ -174,10 +175,10 @@ public class OperationController {
         return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Create a new operation of moving")
+    @ApiOperation(value = "Create moving transaction")
     @PostMapping("/moving")
     ResponseEntity<ResponseOperationMoving> addOperationMoving(
-            @RequestBody @Valid OperationMovingDto newOperation,
+            @RequestBody @Validated(Created.class) OperationMovingDto newOperation,
             @NotBlank @RequestParam @Email String email,
             @RequestHeader(AUTHORIZATION) String token) {
 
@@ -185,5 +186,57 @@ public class OperationController {
         ResponseOperationMoving operationDto = operationService.addOperationMoving(newOperation, email);
 
         return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Update income transaction")
+    @PutMapping("/income")
+    ResponseEntity<ResponseOperation> updateOperationIncome(
+            @RequestBody @Valid OperationDto updateOperation,
+            @NotBlank @RequestParam @Email String email,
+            @RequestHeader(AUTHORIZATION) String token) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        ResponseOperation operationDto = operationService.updateOperationIncome(updateOperation, email);
+
+        return new ResponseEntity<>(operationDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Update expense transaction")
+    @PutMapping("/expense")
+    ResponseEntity<ResponseOperation> updateOperationExpense(
+            @RequestBody @Valid OperationDto updateOperation,
+            @NotBlank @RequestParam @Email String email,
+            @RequestHeader(AUTHORIZATION) String token) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        ResponseOperation operationDto = operationService.updateOperationExpense(updateOperation, email);
+
+        return new ResponseEntity<>(operationDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Delete income transaction")
+    @DeleteMapping("/income/{operationId}")
+    ResponseEntity<ResponseOperation> deleteOperationIncome(
+            @NotBlank @RequestParam @Email String email,
+            @RequestHeader(AUTHORIZATION) String token,
+            @PathVariable Long operationId) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        operationService.deleteOperationIncomeById(operationId, email);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "Delete expense transaction")
+    @DeleteMapping("/expense/{operationId}")
+    ResponseEntity<ResponseOperation> deleteOperationExpense(
+            @NotBlank @RequestParam @Email String email,
+            @RequestHeader(AUTHORIZATION) String token,
+            @PathVariable Long operationId) {
+
+        controllerUtil.validateTokenAndEmail(email, token);
+        operationService.deleteOperationExpenseById(operationId, email);
+
+        return ResponseEntity.ok().build();
     }
 }

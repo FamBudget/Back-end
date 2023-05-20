@@ -1,5 +1,6 @@
 package com.example.familybudget.dto;
 
+import com.example.familybudget.Created;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,17 +12,18 @@ import java.time.LocalDateTime;
 
 @Data
 public class OperationDto {
-    private Long id;
     @NotNull
-    @Positive
+    private Long id;
+    @NotNull(groups = Created.class)
+    @Positive(groups = Created.class)
     private Double amount;
     private String description;
-    @NotNull
+    @NotNull(groups = Created.class)
     private Long categoryId;
-    @NotNull
+    @NotNull(groups = Created.class)
     private Long accountId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
-    @PastOrPresent
+    @PastOrPresent(groups = Created.class)
     private LocalDateTime createdOn;
 }

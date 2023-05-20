@@ -216,7 +216,7 @@ public class OperationController {
 
     @ApiOperation(value = "Delete income transaction")
     @DeleteMapping("/income/{operationId}")
-    ResponseEntity<ResponseOperation> deleteOperationIncome(
+    ResponseEntity<?> deleteOperationIncome(
             @NotBlank @RequestParam @Email String email,
             @RequestHeader(AUTHORIZATION) String token,
             @PathVariable Long operationId) {
@@ -229,7 +229,7 @@ public class OperationController {
 
     @ApiOperation(value = "Delete expense transaction")
     @DeleteMapping("/expense/{operationId}")
-    ResponseEntity<ResponseOperation> deleteOperationExpense(
+    ResponseEntity<?> deleteOperationExpense(
             @NotBlank @RequestParam @Email String email,
             @RequestHeader(AUTHORIZATION) String token,
             @PathVariable Long operationId) {

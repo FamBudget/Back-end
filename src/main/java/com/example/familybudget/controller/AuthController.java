@@ -10,6 +10,7 @@ import com.example.familybudget.exception.CurrencyNotValidException;
 import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.mapper.UserMapper;
 import com.example.familybudget.security.JwtProvider;
+import com.example.familybudget.service.Platform;
 import com.example.familybudget.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +32,7 @@ public class AuthController {
     private final JwtProvider jwtProvider;
     private final ControllerUtil controllerUtil;
     private static final String AUTHORIZATION = "Authorization";
+    private static final String X_CLIENT_PLATFORM = "X-Client-Platform";
 
     @ApiOperation(value = "Registration new user", notes = "The email, firstName, lastName, currency, password and " +
             "confirmPassword are sent in json format. " +
@@ -85,8 +87,10 @@ public class AuthController {
 
     @ApiOperation(value = "Repair password send link", notes = "First step of password recovery. Send link to email")
     @PostMapping("/reset-password")
-    public ResponseEntity<ResponseUserSecurityStatus>  requestResetPassword(@NotBlank @Email @RequestParam String email) throws Exception {
-        ResponseUserSecurityStatus resetPassword = userService.requestResetPassword(email);
+    public ResponseEntity<ResponseUserSecurityStatus>  requestResetPassword(
+            @RequestHeader(value = X_CLIENT_PLATFORM, defaultValue = "ANGULAR") Platform clientPlatform,
+            @NotBlank @Email @RequestParam String email) throws Exception {
+        ResponseUserSecurityStatus resetPassword = userService.requestResetPassword(email, clientPlatform);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 

@@ -38,6 +38,10 @@ public class UserService {
     private final CategoryExpenseRepository categoryExpenseRepository;
     @Value("${server.ip}")
     private String serverIp;
+    @Value("${client.angular-ip}")
+    private String angularIp;
+    @Value("${client.react-ip}")
+    private String reactIp;
     private final List<String> categoryIncomeList = List.of(
             "Заработная плата",
             "Подработка",
@@ -128,14 +132,26 @@ public class UserService {
         log.debug("Added new account {} for user: {}", account, user);
     }
 
-    public ResponseUserSecurityStatus requestResetPassword(String email) throws Exception {
+    public ResponseUserSecurityStatus requestResetPassword(String email, Platform clientPlatform) throws Exception {
         User user = findByEmail(email);
         log.debug("repairing user password by email {}", email);
 
         user.setActivationCode(UUID.randomUUID().toString());
         userRepository.save(user);
 
-        String resetPasswordLink = "http://" + serverIp + "/?code=";
+        String resetPasswordLink;
+        switch (clientPlatform) {
+            case ANGULAR:
+                resetPasswordLink = "http://" + angularIp + "/?code=";
+                break;
+            case REACT:
+                resetPasswordLink = "http://" + reactIp + "/?code=";
+                break;
+            default:
+                resetPasswordLink = "http://" + serverIp + "/?code=";
+                break;
+        }
+
 
         String message = String.format(
                 "Hello, %s %s! \n" +

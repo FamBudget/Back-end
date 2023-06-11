@@ -117,7 +117,7 @@ public class OperationService {
             sortParameter = "accountTo.name";
         }
         Pageable page = PageRequest.of(from / size, size,
-                sortDesc ? Sort.by(sortParameter).descending() :  Sort.by(sortParameter).ascending());
+                sortDesc ? Sort.by(sortParameter).descending() : Sort.by(sortParameter).ascending());
 
         LocalDateTime start = startDate == null ? LocalDateTime.now().minusYears(999) : startDate;
         LocalDateTime end = endDate == null ? LocalDateTime.now() : endDate;

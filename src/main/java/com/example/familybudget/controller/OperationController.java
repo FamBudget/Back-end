@@ -6,7 +6,6 @@ import com.example.familybudget.dto.OperationDto;
 import com.example.familybudget.dto.OperationMovingDto;
 import com.example.familybudget.dto.ResponseOperation;
 import com.example.familybudget.dto.ResponseOperationMoving;
-import com.example.familybudget.exception.ForbiddenException;
 import com.example.familybudget.service.OperationService;
 import com.example.familybudget.service.SortParameter;
 import io.swagger.annotations.ApiOperation;
@@ -44,22 +43,14 @@ public class OperationController {
             @RequestParam(required = false) LocalDateTime startDate,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false, defaultValue = "DATE") String sort,
+            @RequestParam(required = false, defaultValue = "DATE") SortParameter sort,
             @RequestParam(required = false, defaultValue = "true") Boolean sortDesc,
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
             @Positive @RequestParam(defaultValue = "10") Integer size) {
 
-        SortParameter sortParameter;
-
-        try {
-            sortParameter =  SortParameter.valueOf(sort);
-        } catch (IllegalArgumentException e) {
-            throw new ForbiddenException("Unknown sort: " + sort);
-        }
-
         controllerUtil.validateTokenAndEmail(email, token);
         List<ResponseOperation> operationsDto = operationService
-                .getOperationsExpense(email, startDate, endDate, sortParameter, sortDesc, from, size);
+                .getOperationsExpense(email, startDate, endDate, sort, sortDesc, from, size);
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
@@ -72,22 +63,14 @@ public class OperationController {
             @RequestParam(required = false) LocalDateTime startDate,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false, defaultValue = "DATE") String sort,
+            @RequestParam(required = false, defaultValue = "DATE") SortParameter sort,
             @RequestParam(required = false, defaultValue = "true") Boolean sortDesc,
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
             @Positive @RequestParam(defaultValue = "10") Integer size) {
 
-        SortParameter sortParameter;
-
-        try {
-            sortParameter =  SortParameter.valueOf(sort);
-        } catch (IllegalArgumentException e) {
-            throw new ForbiddenException("Unknown sort: " + sort);
-        }
-
         controllerUtil.validateTokenAndEmail(email, token);
         List<ResponseOperation> operationsDto = operationService
-                .getOperationsIncome(email, startDate, endDate, sortParameter, sortDesc, from, size);
+                .getOperationsIncome(email, startDate, endDate, sort, sortDesc, from, size);
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
@@ -100,22 +83,14 @@ public class OperationController {
             @RequestParam(required = false) LocalDateTime startDate,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false, defaultValue = "DATE") String sort,
+            @RequestParam(required = false, defaultValue = "DATE") SortParameter sort,
             @RequestParam(required = false, defaultValue = "true") Boolean sortDesc,
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
             @Positive @RequestParam(defaultValue = "10") Integer size) {
 
-        SortParameter sortParameter;
-
-        try {
-            sortParameter =  SortParameter.valueOf(sort);
-        } catch (IllegalArgumentException e) {
-            throw new ForbiddenException("Unknown sort: " + sort);
-        }
-
         controllerUtil.validateTokenAndEmail(email, token);
         List<ResponseOperationMoving> operationsDto = operationService
-                .getOperationsMoving(email, startDate, endDate, sortParameter, sortDesc, from, size);
+                .getOperationsMoving(email, startDate, endDate, sort, sortDesc, from, size);
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 

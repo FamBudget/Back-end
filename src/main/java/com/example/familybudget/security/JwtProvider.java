@@ -22,7 +22,7 @@ public class JwtProvider {
     public String generateToken(String login) {
         return Jwts.builder()
                 .setSubject(login.contains("%40") ? login.replace("%40" , "@"): login)
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration * 6))
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }

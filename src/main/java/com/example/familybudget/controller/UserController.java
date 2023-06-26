@@ -35,7 +35,7 @@ public class UserController {
                                                   @NotBlank @Email @RequestParam String email) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        UserDto userDto = userService.getUserByEmail(email);
+        UserDto userDto = userService.getUserByEmail(email.toLowerCase());
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
@@ -47,7 +47,7 @@ public class UserController {
                                                       @RequestParam String email) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        userService.deleteUserByEmail(email);
+        userService.deleteUserByEmail(email.toLowerCase());
         return ResponseEntity.ok().build();
     }
 
@@ -58,7 +58,7 @@ public class UserController {
                                                                       @RequestBody @Valid
                                                                           NewPasswordRequest newPasswordRequest) {
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseUserSecurityStatus resetPassword = userService.changePassword(email, newPasswordRequest);
+        ResponseUserSecurityStatus resetPassword = userService.changePassword(email.toLowerCase(), newPasswordRequest);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 
@@ -69,7 +69,7 @@ public class UserController {
                                                                       @RequestBody @Valid
                                                                   UpdateUserRequest updateUser) {
         controllerUtil.validateTokenAndEmail(email, token);
-        UserDto userDto = userService.updateUser(email, updateUser);
+        UserDto userDto = userService.updateUser(email.toLowerCase(), updateUser);
         if (!userDto.getEmail().equals(email)) {
             jwtProvider.blacklistToken(token.substring(7));
         }

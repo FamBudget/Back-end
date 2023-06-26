@@ -41,7 +41,7 @@ public class AccountController {
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        List<AccountDto> accountDtoList = accountService.getAccountsByEmail(email, from, size);
+        List<AccountDto> accountDtoList = accountService.getAccountsByEmail(email.toLowerCase(), from, size);
         return new ResponseEntity<>(accountDtoList, HttpStatus.OK);
     }
 
@@ -57,7 +57,7 @@ public class AccountController {
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        AccountDto accountDto = accountService.addAccount(newAccountDto, email);
+        AccountDto accountDto = accountService.addAccount(newAccountDto, email.toLowerCase());
 
         return new ResponseEntity<>(accountDto, HttpStatus.CREATED);
     }
@@ -68,7 +68,7 @@ public class AccountController {
                                                       @PathVariable long accountId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        AccountDto accountDto = accountService.getAccountById(accountId, email);
+        AccountDto accountDto = accountService.getAccountById(accountId, email.toLowerCase());
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
     }
 
@@ -84,7 +84,7 @@ public class AccountController {
             @RequestBody @Valid UpdateAccount updateAccountDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        AccountDto accountDto = accountService.updateAccount(updateAccountDto, email);
+        AccountDto accountDto = accountService.updateAccount(updateAccountDto, email.toLowerCase());
 
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
     }
@@ -101,7 +101,7 @@ public class AccountController {
             @PathVariable Long accountId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        accountService.deleteAccountById(accountId, email);
+        accountService.deleteAccountById(accountId, email.toLowerCase());
 
         return ResponseEntity.ok().build();
     }

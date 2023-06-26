@@ -50,7 +50,7 @@ public class OperationController {
 
         controllerUtil.validateTokenAndEmail(email, token);
         List<ResponseOperation> operationsDto = operationService
-                .getOperationsExpense(email, startDate, endDate, sort, sortDesc, from, size);
+                .getOperationsExpense(email.toLowerCase(), startDate, endDate, sort, sortDesc, from, size);
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class OperationController {
 
         controllerUtil.validateTokenAndEmail(email, token);
         List<ResponseOperation> operationsDto = operationService
-                .getOperationsIncome(email, startDate, endDate, sort, sortDesc, from, size);
+                .getOperationsIncome(email.toLowerCase(), startDate, endDate, sort, sortDesc, from, size);
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
@@ -90,7 +90,7 @@ public class OperationController {
 
         controllerUtil.validateTokenAndEmail(email, token);
         List<ResponseOperationMoving> operationsDto = operationService
-                .getOperationsMoving(email, startDate, endDate, sort, sortDesc, from, size);
+                .getOperationsMoving(email.toLowerCase(), startDate, endDate, sort, sortDesc, from, size);
         return new ResponseEntity<>(operationsDto, HttpStatus.OK);
     }
 
@@ -100,7 +100,7 @@ public class OperationController {
                                                                @PathVariable long operationId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperation operationDto = operationService.getOperationExpenseById(operationId, email);
+        ResponseOperation operationDto = operationService.getOperationExpenseById(operationId, email.toLowerCase());
         return new ResponseEntity<>(operationDto, HttpStatus.OK);
     }
 
@@ -110,7 +110,7 @@ public class OperationController {
                                                                      @PathVariable long operationId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperation operationDto = operationService.getOperationIncomeById(operationId, email);
+        ResponseOperation operationDto = operationService.getOperationIncomeById(operationId, email.toLowerCase());
         return new ResponseEntity<>(operationDto, HttpStatus.OK);
     }
 
@@ -120,7 +120,7 @@ public class OperationController {
                                                                      @PathVariable long operationId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperationMoving operationDto = operationService.getOperationMovingById(operationId, email);
+        ResponseOperationMoving operationDto = operationService.getOperationMovingById(operationId, email.toLowerCase());
         return new ResponseEntity<>(operationDto, HttpStatus.OK);
     }
 
@@ -132,7 +132,7 @@ public class OperationController {
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperation operationDto = operationService.addOperationIncome(newOperation, email);
+        ResponseOperation operationDto = operationService.addOperationIncome(newOperation, email.toLowerCase());
 
         return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
     }
@@ -145,7 +145,7 @@ public class OperationController {
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperation operationDto = operationService.addOperationExpense(newOperation, email);
+        ResponseOperation operationDto = operationService.addOperationExpense(newOperation, email.toLowerCase());
 
         return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
     }
@@ -158,7 +158,7 @@ public class OperationController {
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperationMoving operationDto = operationService.addOperationMoving(newOperation, email);
+        ResponseOperationMoving operationDto = operationService.addOperationMoving(newOperation, email.toLowerCase());
 
         return new ResponseEntity<>(operationDto, HttpStatus.CREATED);
     }
@@ -171,7 +171,7 @@ public class OperationController {
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperation operationDto = operationService.updateOperationIncome(updateOperation, email);
+        ResponseOperation operationDto = operationService.updateOperationIncome(updateOperation, email.toLowerCase());
 
         return new ResponseEntity<>(operationDto, HttpStatus.OK);
     }
@@ -184,7 +184,7 @@ public class OperationController {
             @RequestHeader(AUTHORIZATION) String token) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        ResponseOperation operationDto = operationService.updateOperationExpense(updateOperation, email);
+        ResponseOperation operationDto = operationService.updateOperationExpense(updateOperation, email.toLowerCase());
 
         return new ResponseEntity<>(operationDto, HttpStatus.OK);
     }
@@ -197,7 +197,7 @@ public class OperationController {
             @PathVariable Long operationId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        operationService.deleteOperationIncomeById(operationId, email);
+        operationService.deleteOperationIncomeById(operationId, email.toLowerCase());
 
         return ResponseEntity.ok().build();
     }
@@ -210,7 +210,7 @@ public class OperationController {
             @PathVariable Long operationId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        operationService.deleteOperationExpenseById(operationId, email);
+        operationService.deleteOperationExpenseById(operationId, email.toLowerCase());
 
         return ResponseEntity.ok().build();
     }

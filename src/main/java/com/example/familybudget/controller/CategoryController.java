@@ -40,7 +40,7 @@ public class CategoryController {
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        List<CategoryDto> categoryIncomeList = categoryService.getCategoriesIncomeByUserId(email, from, size);
+        List<CategoryDto> categoryIncomeList = categoryService.getCategoriesIncomeByUserId(email.toLowerCase(), from, size);
         return new ResponseEntity<>(categoryIncomeList, HttpStatus.OK);
     }
 
@@ -56,7 +56,7 @@ public class CategoryController {
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        List<CategoryDto> categoryExpenseList = categoryService.getCategoriesExpenseByUserId(email, from, size);
+        List<CategoryDto> categoryExpenseList = categoryService.getCategoriesExpenseByUserId(email.toLowerCase(), from, size);
         return new ResponseEntity<>(categoryExpenseList, HttpStatus.OK);
     }
 
@@ -72,7 +72,7 @@ public class CategoryController {
             @Valid @RequestBody NewCategoryDto newCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.addCategoryIncome(newCategoryDto, email);
+        CategoryDto categoryDto = categoryService.addCategoryIncome(newCategoryDto, email.toLowerCase());
 
         return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
     }
@@ -89,7 +89,7 @@ public class CategoryController {
             @Valid @RequestBody NewCategoryDto newCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.addCategoryExpense(newCategoryDto, email);
+        CategoryDto categoryDto = categoryService.addCategoryExpense(newCategoryDto, email.toLowerCase());
 
         return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
     }
@@ -100,7 +100,7 @@ public class CategoryController {
                                                               @PathVariable long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.getCategoryIncomeById(categoryId, email);
+        CategoryDto categoryDto = categoryService.getCategoryIncomeById(categoryId, email.toLowerCase());
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 
@@ -110,7 +110,7 @@ public class CategoryController {
                                                                @PathVariable long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.getCategoryExpenseById(categoryId, email);
+        CategoryDto categoryDto = categoryService.getCategoryExpenseById(categoryId, email.toLowerCase());
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 
@@ -126,7 +126,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryDto updateCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.updateCategoryIncome(updateCategoryDto, email);
+        CategoryDto categoryDto = categoryService.updateCategoryIncome(updateCategoryDto, email.toLowerCase());
 
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
@@ -143,7 +143,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryDto updateCategoryDto) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        CategoryDto categoryDto = categoryService.updateCategoryExpense(updateCategoryDto, email);
+        CategoryDto categoryDto = categoryService.updateCategoryExpense(updateCategoryDto, email.toLowerCase());
 
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
@@ -160,7 +160,7 @@ public class CategoryController {
             @PathVariable Long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        categoryService.deleteCategoryIncomeById(categoryId, email);
+        categoryService.deleteCategoryIncomeById(categoryId, email.toLowerCase());
 
         return ResponseEntity.ok().build();
     }
@@ -177,7 +177,7 @@ public class CategoryController {
             @PathVariable Long categoryId) {
 
         controllerUtil.validateTokenAndEmail(email, token);
-        categoryService.deleteCategoryExpenseById(categoryId, email);
+        categoryService.deleteCategoryExpenseById(categoryId, email.toLowerCase());
 
         return ResponseEntity.ok().build();
     }

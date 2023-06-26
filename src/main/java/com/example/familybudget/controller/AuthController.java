@@ -46,6 +46,7 @@ public class AuthController {
         Currency currency = Currency.valid(registrationRequest.getCurrency())
                 .orElseThrow(() -> new CurrencyNotValidException("Unknown state: " + registrationRequest.getCurrency()));
         User user = UserMapper.INSTANCE.registrationToUser(registrationRequest);
+        user.setEmail(registrationRequest.getEmail().toLowerCase());
         user.setCurrency(currency);
         userService.registerUser(user);
         UserDto userDto = UserMapper.INSTANCE.toUserDto(user);
@@ -65,7 +66,7 @@ public class AuthController {
         if (user.getStatus() != Status.ACTIVE) {
             throw new ForbiddenException("User not activated");
         }
-        String token = jwtProvider.generateToken(user.getEmail());
+        String token = jwtProvider.generateToken(user.getEmail().toLowerCase());
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setToken(token);
         return new ResponseEntity<>(authenticationResponse, HttpStatus.OK);
@@ -90,7 +91,7 @@ public class AuthController {
     public ResponseEntity<ResponseUserSecurityStatus>  requestResetPassword(
             @RequestHeader(value = X_CLIENT_PLATFORM, defaultValue = "ANGULAR") Platform clientPlatform,
             @NotBlank @Email @RequestParam String email) throws Exception {
-        ResponseUserSecurityStatus resetPassword = userService.requestResetPassword(email, clientPlatform);
+        ResponseUserSecurityStatus resetPassword = userService.requestResetPassword(email.toLowerCase(), clientPlatform);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 
@@ -98,7 +99,7 @@ public class AuthController {
     @GetMapping("/verify-code/{code}")
     public ResponseEntity<ResponseUserSecurityStatus> verifyCode(@NotBlank @Email @RequestParam String email,
                                                                  @PathVariable @NotBlank String code) {
-        ResponseUserSecurityStatus resetPassword = userService.verifyCode(email, code);
+        ResponseUserSecurityStatus resetPassword = userService.verifyCode(email.toLowerCase(), code);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 
@@ -107,7 +108,7 @@ public class AuthController {
     public ResponseEntity<ResponseUserSecurityStatus>  changePassword(@NotBlank @Email @RequestParam String email,
                                                                       @PathVariable @NotBlank String code,
                                                                       @RequestBody @Valid NewPasswordRequest newPasswordRequest) {
-        ResponseUserSecurityStatus resetPassword = userService.repairPassword(email, code, newPasswordRequest);
+        ResponseUserSecurityStatus resetPassword = userService.repairPassword(email.toLowerCase(), code, newPasswordRequest);
         return new ResponseEntity<>(resetPassword, HttpStatus.OK);
     }
 }

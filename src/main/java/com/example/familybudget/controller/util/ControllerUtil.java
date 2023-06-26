@@ -11,8 +11,8 @@ public class ControllerUtil {
     private final JwtProvider jwtProvider;
 
     public void validateTokenAndEmail(String email, String token) {
-        String emailDec = email.contains("%40") ? email.replace("%40" , "@"): email;
-        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7));
+        String emailDec = (email.contains("%40") ? email.replace("%40" , "@"): email).toLowerCase();
+        String emailJwt = jwtProvider.getEmailFromToken(token.substring(7)).toLowerCase();
         if (!emailDec.equals(emailJwt)) {
             throw new ForbiddenException("The email from the requestBody does not match the email from the token");
         }

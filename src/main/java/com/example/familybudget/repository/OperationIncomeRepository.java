@@ -18,7 +18,7 @@ public interface OperationIncomeRepository extends JpaRepository<OperationIncome
         );
     }
 
-    @Query("SELECT op FROM OperationExpense op JOIN FETCH op.category JOIN FETCH op.account JOIN FETCH op.user WHERE " +
+    @Query("SELECT op FROM OperationIncome op JOIN FETCH op.category JOIN FETCH op.account JOIN FETCH op.user WHERE " +
             "(op.createdOn >= :startDate) " +
             "AND (op.createdOn <= :endDate) " +
             "AND op.user = :user"

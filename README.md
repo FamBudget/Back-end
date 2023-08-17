@@ -60,7 +60,7 @@ The application is built using Java 11 and Spring Boot, along with several other
 #### After that one need to build the project by Maven
 ```sh
 ##build the project
-mvn clean package
+mvn clean package  
 ```
 
 After that one can run the project with the command:

@@ -30,8 +30,7 @@ jobs:
         context: .
         file: Dockerfile
         push: true
-        tags: fambudget/fambudget_back:latest
-# tags: fambudget/fambudget_back:${{github.run_number}}
+        tags: ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}
       
   Deploy:
     needs: Build
@@ -44,20 +43,18 @@ jobs:
             DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USER }}
             DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
             PRIVATE_KEY: ${{ secrets.SSH_AWS_FAMBUDGET  }}
-            HOSTNAME : ${{ secrets.HOSTNAME  }}
-            USER_NAME : ${{ secrets.USER_NAME  }}
+            HOSTNAME: ${{ vars.HOSTNAME  }}
+            USER_NAME: ${{ vars.USER_NAME  }}
+            DOCKER_HUB_REPOSITORY: ${{ secrets.DOCKER_HUB_REPOSITORY}}
+            TAG: ${{ vars.DOCKERHUB_TAG }}
+            CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
 
         run: |
            echo "$PRIVATE_KEY" > fambudget.pem && chmod 600 fambudget.pem
            ssh -o StrictHostKeyChecking=no -i fambudget.pem ${USER_NAME}@${HOSTNAME}    ' 
              docker login --username=${DOCKER_HUB_USERNAME} --password=${DOCKER_HUB_PASSWORD}
-             sudo docker stop fambudget_back
-             sudo docker rm fambudget_back
-             sudo docker rmi fambudget/fambudget_back:latest
-             sudo docker images -a
-             sudo docker ps -a
-             sudo docker run -d --name 'fambudget_back' -p 8080:8080 -p 25:25 -p 8888:8888 fambudget/fambudget_back:latest          
-            '       
-
-# sudo docker run -d --name 'fambudget_back' -p 8080:8080 fambudget/fambudget_back:${{github.run_number}}
-
+             sudo docker stop ${CONTAINER_NAME}
+             sudo docker rm ${CONTAINER_NAME}
+             sudo docker rmi ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG}
+             sudo docker run -d --name '${CONTAINER_NAME}' ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG}
+            '

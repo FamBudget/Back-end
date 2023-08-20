@@ -58,5 +58,5 @@ jobs:
              sudo docker stop ${CONTAINER_NAME} $$\
              sudo docker rm ${CONTAINER_NAME} $$\
              sudo docker rmi ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG} $$\
-             sudo docker run --detach --name '${CONTAINER_NAME}' --network=${CONTAINER_NETWORK} ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG}
+             sudo docker run  --name '${CONTAINER_NAME}' --network=${CONTAINER_NETWORK} ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG}
             '

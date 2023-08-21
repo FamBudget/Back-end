@@ -43,7 +43,7 @@ jobs:
          key: ${{ secrets.SSH_AWS_FAMBUDGET }}
          port: ${{ vars.SSH_PORT }}
          script: |
-           docker login --username=${{ secrets.DOCKER_USER }} --password=${{ secrets.DOCKER_PASSWORD }}
+           sudo docker login --username=${{ secrets.DOCKER_USER }} --password=${{ secrets.DOCKER_PASSWORD }}
            sudo docker stop ${{ vars.CONTAINER_NAME }}
            sudo docker ${{ vars.CONTAINER_NAME }}
            sudo docker rmi ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}

@@ -31,32 +31,49 @@ jobs:
         file: Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}
-      
   Deploy:
     needs: Build
-    runs-on: ubuntu-22.04
-  
+    runs-on: ubuntu-22.04  
     steps:
-      - uses: actions/checkout@v3
-      - name: Deploy in EC2
-        env:
-            DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USER }}
-            DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-            PRIVATE_KEY: ${{ secrets.SSH_AWS_FAMBUDGET  }}
-            HOSTNAME: ${{ vars.HOSTNAME  }}
-            USER_NAME: ${{ vars.USER_NAME  }}
-            DOCKER_HUB_REPOSITORY: ${{ secrets.DOCKER_HUB_REPOSITORY}}
-            TAG: ${{ vars.DOCKERHUB_TAG }}
-            CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
-            CONTAINER_NETWORK: ${{ vars.CONTAINER_NETWORK }}
+    - name: Deploy to AWS EC2
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+         host: ${{ vars.HOSTNAME }}
+         username: ${{ vars.USER_NAME }}
+         key: ${{ secrets.SSH_AWS_FAMBUDGET }}
+         port: ${{ vars.SSH_PORT }}
+         script: |
+           docker login --username=${{ secrets.DOCKER_USER }} --password=${{ secrets.DOCKER_PASSWORD }}
+           sudo docker stop ${{ vars.CONTAINER_NAME }}
+           sudo docker ${{ vars.CONTAINER_NAME }}
+           sudo docker rmi ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}
+           sudo docker run -d --name ${{ vars.CONTAINER_NAME }}' --network=${{ vars.CONTAINER_NETWORK }}  ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}  
+           
+#  Deploy:
+#    needs: Build
+#    runs-on: ubuntu-22.04
+  
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Deploy in EC2
+#        env:
+#            DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USER }}
+#            DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+#            PRIVATE_KEY: ${{ secrets.SSH_AWS_FAMBUDGET  }}
+#            HOSTNAME: ${{ vars.HOSTNAME  }}
+#            USER_NAME: ${{ vars.USER_NAME  }}
+#            DOCKER_HUB_REPOSITORY: ${{ secrets.DOCKER_HUB_REPOSITORY}}
+#            TAG: ${{ vars.DOCKERHUB_TAG }}
+#            CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+#            CONTAINER_NETWORK: ${{ vars.CONTAINER_NETWORK }}
             
 
-        run: |
-           echo "$PRIVATE_KEY" > fambudget.pem && chmod 400 fambudget.pem
-           ssh -o StrictHostKeyChecking=no -i fambudget.pem ${USER_NAME}@${HOSTNAME}    ' 
-             docker login --username=${DOCKER_HUB_USERNAME} --password=${DOCKER_HUB_PASSWORD} $$
-             sudo docker stop ${CONTAINER_NAME} $$
-             sudo docker rm ${CONTAINER_NAME} $$
-             sudo docker rmi ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG} $$
-             sudo docker run -d --name '${CONTAINER_NAME}' --network=${CONTAINER_NETWORK} ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG}
-            '
+ #       run: |
+ #          echo "$PRIVATE_KEY" > fambudget.pem && chmod 400 fambudget.pem
+ #          ssh -o StrictHostKeyChecking=no -i fambudget.pem ${USER_NAME}@${HOSTNAME}    ' 
+ #            docker login --username=${DOCKER_HUB_USERNAME} --password=${DOCKER_HUB_PASSWORD} $$
+ #            sudo docker stop ${CONTAINER_NAME} $$
+ #            sudo docker rm ${CONTAINER_NAME} $$
+ #            sudo docker rmi ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG} $$
+ #            sudo docker run -d --name '${CONTAINER_NAME}' --network=${CONTAINER_NETWORK} ${DOCKER_HUB_REPOSITORY}:${DOCKERHUB_TAG}
+ #           '

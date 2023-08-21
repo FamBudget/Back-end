@@ -47,7 +47,7 @@ jobs:
            sudo docker stop ${{ vars.CONTAINER_NAME }}
            sudo docker rm ${{ vars.CONTAINER_NAME }}
            sudo docker rmi ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}
-           sudo docker run -d --name ${{ vars.CONTAINER_NAME }}' --network=${{ vars.CONTAINER_NETWORK }}  ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}  
+           sudo docker run -d --name '${{ vars.CONTAINER_NAME }}' --network=${{ vars.CONTAINER_NETWORK }}  ${{ secrets.DOCKER_HUB_REPOSITORY}}:${{ vars.DOCKERHUB_TAG }}  
            
 #  Deploy:
 #    needs: Build

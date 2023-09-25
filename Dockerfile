@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.5_10-alpine
+FROM openjdk:17.0.1-jdk-slim
 WORKDIR /app
 COPY target/familybudget*.jar app.jar
 EXPOSE 8080
